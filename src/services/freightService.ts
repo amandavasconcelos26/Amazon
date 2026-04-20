@@ -114,18 +114,19 @@ export const parseFile = async (file: File): Promise<{ data: any[], footerTotal?
         resolve({ data: allData, footerTotal });
     } catch (error: any) {
       console.error("Erro ao processar PDF:", error);
-      let userMsg = "Falha ao extrair dados do arquivo.";
-      const errorStr = String(error);
+      let userMsg = error.message || "Falha ao extrair dados do arquivo.";
+      const errorStr = String(error).toLowerCase();
       
       if (errorStr.includes("429") || errorStr.includes("quota")) {
         userMsg = "Limite de processamento atingido. Por favor, aguarde 1 minuto e tente novamente ou use um arquivo menor.";
-      } else if (errorStr.includes("503") || errorStr.includes("UNAVAILABLE") || errorStr.includes("high demand")) {
-        userMsg = "O servidor de processamento está com alta demanda no momento. Por favor, tente novamente em alguns instantes.";
+      } else if (errorStr.includes("503") || errorStr.includes("unavailable") || errorStr.includes("high demand") || errorStr.includes("overloaded")) {
+        userMsg = "O servidor de processamento está com alta demanda ou sobrecarregado. Por favor, tente novamente em alguns instantes.";
       } else if (errorStr.includes("safety")) {
-        userMsg = "O conteúdo do arquivo foi bloqueado pelos filtros de segurança do sistema.";
+        userMsg = "O conteúdo do arquivo foi bloqueado pelos filtros de segurança da inteligência artificial.";
+      } else if (errorStr.includes("api key") || errorStr.includes("invalid key") || errorStr.includes("403")) {
+        userMsg = "Erro de autenticação com a API. Verifique a chave de API nas configurações do ambiente.";
       }
       
-      // Não expor o JSON técnico para o usuário final
       reject(new Error(userMsg));
     }
     } else {

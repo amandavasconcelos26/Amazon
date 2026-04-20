@@ -20,7 +20,7 @@ export const autoMapColumns = async (columns: string[]) => {
     try {
       const engine = getProcessingClient();
       const response = await engine.models.generateContent({
-        model: "gemini-3.1-flash-lite-preview",
+        model: "gemini-3-flash-preview",
         contents: [
           { text: `Mapeie as colunas fornecidas para as chaves do sistema.
           Colunas disponíveis: ${columns.join(', ')}
@@ -121,12 +121,12 @@ export const parsePDFText = async (text: string) => {
 
   console.log("Processando texto (tamanho):", text.length);
 
-  let retries = 2;
+  let retries = 3; // Aumentar retries
   while (retries >= 0) {
     try {
       const engine = getProcessingClient();
       const response = await engine.models.generateContent({
-        model: "gemini-3.1-flash-lite-preview",
+        model: "gemini-3-flash-preview", // Usar modelo mais estável e padrão
         contents: [
           { text: `Extraia os dados da tabela deste texto de relatório logístico:\n\n${text}` }
         ],
@@ -135,19 +135,14 @@ export const parsePDFText = async (text: string) => {
           
           Sua tarefa é extrair os dados da tabela e retornar um array de objetos JSON.
           
-          REGRAS CRÍTICAS DE EXTRAÇÃO (PREVENÇÃO DE EMBARALHAMENTO):
+          REGRAS CRÍTICAS DE EXTRAÇÃO:
           1. Cada linha da tabela de fretes deve ser um objeto no array.
-          2. NUNCA misture valores entre linhas. O valor de uma linha pertence SOMENTE àquele CTE. Preste muita atenção ao alinhamento.
-          3. Padronize as chaves do JSON. Use SEMPRE as seguintes chaves exatas:
-             - "cte": O número do documento (Número, CT, CTe/NFS).
-             - "freteEmpresa": O valor cobrado do cliente (Frete Empr., Valor frete).
-             - "freteMotorista": O valor pago ao motorista (Frete Mot., Vl Carreteiro, Vl Carreteiro Líquido).
-             - "peso": O peso da carga (Peso (Ton), Peso / Kg).
-             - "margem": A margem de lucro ou resultado. Dê preferência absoluta para colunas que contenham o símbolo "%" (ex: "(%)", "Margem %"). Se não houver %, use a coluna de resultado (Result., Líquido).
-          4. Preserve os valores originais como strings (ex: "15.226,07", "39.540", "0,00").
+          2. NUNCA misture valores entre linhas. O valor de uma linha pertence SOMENTE àquele CTE.
+          3. Padronize as chaves do JSON: "cte", "freteEmpresa", "freteMotorista", "peso", "margem".
+          4. Preserve os valores originais como strings (ex: "15.226,07").
           5. Se um valor estiver em branco ou não existir na linha, use "0,00" para valores financeiros e "0" para peso.
-          6. BUSCA DE RODAPÉ: Procure pelo campo "Result." ou "Resultado" no final do documento (geralmente na última página). Se encontrar um valor total lá (ex: "18.483,22"), inclua um objeto especial no final do array com a chave "isFooter": true e "valorTotal": "valor_encontrado".
-          7. Retorne APENAS o array JSON válido, sem formatação markdown ou explicações.`,
+          6. BUSCA DE RODAPÉ: Se encontrar um campo "Result." ou "Resultado" com o total geral, inclua um objeto com {"isFooter": true, "valorTotal": "valor"}.
+          7. Retorne APENAS o array JSON válido.`,
           responseMimeType: "application/json"
         }
       });
@@ -158,26 +153,19 @@ export const parsePDFText = async (text: string) => {
       
       try {
         const parsed = JSON.parse(responseText);
-        console.log("Dados processados com sucesso. Itens:", parsed.length);
         return parsed;
       } catch (parseError) {
         console.warn("Dados malformados detectados, tentando reparar...");
         const repaired = repairJson(responseText);
         try {
-          const parsedRepaired = JSON.parse(repaired);
-          console.log("Dados reparados com sucesso. Itens:", parsedRepaired.length);
-          return parsedRepaired;
+          return JSON.parse(repaired);
         } catch (repairError) {
-          console.error("Falha crítica ao processar dados:", responseText);
-          // Fallback: extração via regex de objetos individuais
+          // Fallback regex
           const objects = responseText.match(/\{[^{}]+\}/g);
           if (objects) {
-            console.log("Tentando extração via Regex. Objetos encontrados:", objects.length);
             const results = [];
             for (const objStr of objects) {
-              try {
-                results.push(JSON.parse(objStr));
-              } catch (e) {}
+              try { results.push(JSON.parse(objStr)); } catch (e) {}
             }
             return results;
           }
@@ -185,20 +173,24 @@ export const parsePDFText = async (text: string) => {
         }
       }
     } catch (error: any) {
-      const errorStr = String(error);
-      const isUnavailable = errorStr.includes("503") || errorStr.includes("UNAVAILABLE") || errorStr.includes("high demand");
+      const errorStr = String(error).toLowerCase();
+      const isUnavailable = errorStr.includes("503") || errorStr.includes("unavailable") || errorStr.includes("high demand") || errorStr.includes("overloaded");
+      const isQuota = errorStr.includes("429") || errorStr.includes("quota") || errorStr.includes("limit reached");
 
-      if (retries > 0 && (error.message?.includes("429") || error.message?.includes("quota") || error.message?.includes("fetch") || isUnavailable)) {
-        const waitTime = (2 - retries) * 4000 + Math.random() * 4000;
+      if (retries > 0 && (isQuota || isUnavailable || errorStr.includes("fetch"))) {
+        const waitTime = (3 - retries) * 5000 + Math.random() * 5000;
         console.warn(`Extração falhou (${isUnavailable ? 'Servidor Ocupado' : 'Limite'}), tentando novamente em ${Math.round(waitTime/1000)}s... Restantes: ${retries}`);
         retries--;
         await new Promise(r => setTimeout(r, waitTime));
         continue;
       }
       
-      console.error("Erro no processamento:", error);
-      if (error.message?.includes("safety")) {
-        throw new Error("O conteúdo do PDF foi bloqueado pelos filtros de segurança do sistema.");
+      console.error("Erro no processamento Gemini:", error);
+      if (errorStr.includes("safety")) {
+        throw new Error("O conteúdo do arquivo foi bloqueado pelos filtros de segurança da IA.");
+      }
+      if (errorStr.includes("api key") || errorStr.includes("invalid key") || errorStr.includes("403")) {
+        throw new Error("Configuração da API Key inválida ou ausente. Verifique as configurações no Vercel/Ambiente.");
       }
       throw error;
     }
@@ -246,7 +238,7 @@ export const getAuditSupport = async (messages: any[], summary: any, simplifiedR
         * Resumo Executivo: Total de CTEs analisados: 3. Documentos faltantes: 1. Divergências de valor: 1. Valor em Risco: R$ 19.565,27. Margem Total (A): R$ 18.483,22.`;
 
       const response = await engine.models.generateContent({
-        model: 'gemini-3.1-flash-lite-preview',
+        model: 'gemini-3-flash-preview',
         contents: messages,
         config: {
           systemInstruction: systemInstruction,
