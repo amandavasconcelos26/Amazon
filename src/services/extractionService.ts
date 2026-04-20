@@ -5,14 +5,11 @@ let processingClient: GoogleGenAI | null = null;
 
 const getProcessingClient = () => {
   if (!processingClient) {
-    // Tenta primeiro o process.env (Vite define ou Node.js)
-    // Depois tenta window.ENV (injetado pelo servidor em produção)
-    const apiKey = process.env.GEMINI_API_KEY || (typeof window !== 'undefined' && (window as any).ENV?.GEMINI_API_KEY);
-    
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      throw new Error("Erro de Configuração: A chave GEMINI_API_KEY não foi encontrada. Se você estiver no Vercel, certifique-se de configurar esta variável de ambiente nas configurações do projeto.");
+      console.warn("Configuration missing. Data extraction will not work.");
     }
-    processingClient = new GoogleGenAI({ apiKey });
+    processingClient = new GoogleGenAI({ apiKey: apiKey || 'dummy-key' });
   }
   return processingClient;
 };
@@ -23,7 +20,7 @@ export const autoMapColumns = async (columns: string[]) => {
     try {
       const engine = getProcessingClient();
       const response = await engine.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-3.1-flash-lite-preview",
         contents: [
           { text: `Mapeie as colunas fornecidas para as chaves do sistema.
           Colunas disponíveis: ${columns.join(', ')}
@@ -129,7 +126,7 @@ export const parsePDFText = async (text: string) => {
     try {
       const engine = getProcessingClient();
       const response = await engine.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-3.1-flash-lite-preview",
         contents: [
           { text: `Extraia os dados da tabela deste texto de relatório logístico:\n\n${text}` }
         ],
@@ -249,7 +246,7 @@ export const getAuditSupport = async (messages: any[], summary: any, simplifiedR
         * Resumo Executivo: Total de CTEs analisados: 3. Documentos faltantes: 1. Divergências de valor: 1. Valor em Risco: R$ 19.565,27. Margem Total (A): R$ 18.483,22.`;
 
       const response = await engine.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-3.1-flash-lite-preview',
         contents: messages,
         config: {
           systemInstruction: systemInstruction,
