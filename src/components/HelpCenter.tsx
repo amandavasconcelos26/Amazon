@@ -37,6 +37,17 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ results, summary }) => {
   const handleSend = async () => {
     if (!input.trim() || results.length === 0) return;
 
+    // @ts-ignore
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      setMessages(prev => [...prev, 
+        { role: 'user', content: input.trim() },
+        { role: 'model', content: '⚠️ Erro de Configuração: A chave de API do Gemini não foi encontrada no ambiente. Certifique-se de configurar GEMINI_API_KEY no Vercel.' }
+      ]);
+      setInput('');
+      return;
+    }
+
     const userMsg = input.trim();
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);

@@ -7,9 +7,9 @@ const getProcessingClient = () => {
   if (!processingClient) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      console.warn("Configuration missing. Data extraction will not work.");
+      throw new Error("API_KEY_MISSING: A chave de API do Gemini não foi encontrada. Configure a variável GEMINI_API_KEY ou VITE_GEMINI_API_KEY no seu ambiente (Vercel/Local).");
     }
-    processingClient = new GoogleGenAI({ apiKey: apiKey || 'dummy-key' });
+    processingClient = new GoogleGenAI({ apiKey: apiKey });
   }
   return processingClient;
 };
