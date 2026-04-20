@@ -52,12 +52,8 @@ export default function App() {
   const [tolerance, setTolerance] = useState<number>(0);
   const [history, setHistory] = useState<SavedAudit[]>([]);
   const [activeTab, setActiveTab] = useState("audit");
-  const [showConfigWarning, setShowConfigWarning] = useState(true);
 
-  const apiKeyExists = useMemo(() => {
-    const key = process.env.GEMINI_API_KEY;
-    return !!key && key !== 'undefined' && key !== 'null' && key.length > 5;
-  }, []);
+  const apiKeyExists = !!process.env.GEMINI_API_KEY;
 
   const columnsA = useMemo(() => rawA.length > 0 ? Object.keys(rawA[0]) : [], [rawA]);
   const columnsB = useMemo(() => rawB.length > 0 ? Object.keys(rawB[0]) : [], [rawB]);
@@ -321,34 +317,20 @@ export default function App() {
           </motion.div>
         )}
 
-        {!apiKeyExists && showConfigWarning && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, height: 0 }}
-          >
-            <Card className="border-amber-500/30 bg-amber-500/10 overflow-hidden rounded-3xl relative backdrop-blur-md">
-              <CardContent className="p-6 flex items-start gap-4">
-                <div className="bg-amber-500 p-2.5 rounded-xl text-black shadow-lg shadow-amber-500/20">
-                  <AlertTriangle className="h-5 w-5" />
-                </div>
-                <div className="space-y-1 pr-8">
-                  <h3 className="font-bold text-amber-200 text-base">Configuração da API Pendente</h3>
-                  <p className="text-sm text-amber-100/70 leading-relaxed max-w-2xl">
-                    A chave de API do Gemini não foi detectada. Para utilizar a extração automática de PDFs e o Suporte Inteligente no Vercel, adicione a variável de ambiente <code className="bg-black/40 px-1.5 py-0.5 rounded text-amber-300 font-mono text-xs">GEMINI_API_KEY</code> nas configurações do seu projeto.
-                  </p>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => setShowConfigWarning(false)}
-                  className="absolute top-4 right-4 text-amber-200/50 hover:text-amber-200 hover:bg-amber-500/20 rounded-full"
-                >
-                  <RefreshCcw className="h-4 w-4 rotate-45" />
-                </Button>
-              </CardContent>
-            </Card>
-          </motion.div>
+        {!apiKeyExists && (
+          <Card className="border-amber-500/30 bg-amber-500/10 overflow-hidden rounded-3xl">
+            <CardContent className="p-6 flex items-start gap-4">
+              <div className="bg-amber-500 p-2 rounded-xl text-black">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-bold text-amber-200">Configuração Pendente (Vercel/Ambiente)</h3>
+                <p className="text-sm text-amber-100/70">
+                  A chave de API do Gemini não foi detectada. Para utilizar a extração automática de PDFs e o Suporte Inteligente no Vercel, adicione a variável de ambiente <code className="bg-black/30 px-1 rounded">GEMINI_API_KEY</code> nas configurações do seu projeto.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         )}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-10 bg-slate-800/40 backdrop-blur-sm p-1.5 rounded-2xl border border-white/5 h-auto gap-1 shadow-sm">
