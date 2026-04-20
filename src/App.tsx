@@ -303,7 +303,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl p-4 md:p-6 space-y-10 bg-[linear-gradient(135deg,rgba(15,23,42,0.9),rgba(30,58,138,0.85)),url('https://picsum.photos/seed/truck-trailer-highway-logistics/1920/1080?blur=1')] bg-cover bg-center bg-fixed rounded-3xl border border-white/10 shadow-2xl">
+      <main className="mx-auto max-w-7xl p-4 md:p-6 space-y-10 bg-[linear-gradient(135deg,rgba(15,23,42,0.9),rgba(30,58,138,0.85)),url('https://picsum.photos/seed/truck-trailer-highway-logistics/1920/1080?blur=1')] bg-cover bg-center bg-fixed rounded-3xl border-transparent shadow-2xl">
         {errorMessage && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}

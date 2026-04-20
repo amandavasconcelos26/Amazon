@@ -16,7 +16,7 @@
 
 @layer utilities {
   .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
+    @apply bg-card/60 backdrop-blur-xl border border-transparent shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
   }
   
   .data-grid-row {
