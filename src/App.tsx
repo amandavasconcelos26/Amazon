@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Download, Play, RefreshCcw, FileSpreadsheet, LogIn, LogOut, History, Save, User as UserIcon, Truck, MessageSquare, CheckCircle2, Loader2, FileText, Share2, Sparkles, AlertTriangle } from 'lucide-react';
+import { Download, Play, RefreshCcw, FileSpreadsheet, LogIn, LogOut, History, Save, User as UserIcon, Truck, MessageSquare, CheckCircle2, Loader2, FileText, Share2, Sparkles, AlertTriangle, Upload } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { useFirebase } from './contexts/FirebaseContext';
@@ -26,6 +26,29 @@ const DEFAULT_MAPPING: ColumnMapping = {
   freteMotorista: '',
   margem: '',
   peso: ''
+};
+
+const Particles = () => {
+  return (
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      {[...Array(20)].map((_, i) => (
+        <div
+          key={i}
+          className="particle"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100 + 100}%`,
+            width: `${Math.random() * 4 + 1}px`,
+            height: `${Math.random() * 4 + 1}px`,
+            // @ts-ignore
+            '--duration': `${Math.random() * 20 + 10}s`,
+            '--delay': `${Math.random() * 10}s`,
+            '--drift': `${Math.random() * 200 - 100}px`,
+          }}
+        />
+      ))}
+    </div>
+  );
 };
 
 export default function App() {
@@ -260,48 +283,69 @@ export default function App() {
                   mappingA.cte && mappingB.cte;
 
   return (
-    <div className="min-h-screen bg-slate-950 font-sans selection:bg-indigo-500/30 selection:text-indigo-200 subtle-grid">
-      <header className="bg-slate-950/70 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50 shadow-[0_4px_30px_0_rgba(0,0,0,0.4)]">
-        <div className="mx-auto max-w-7xl px-4 md:px-8 h-20 flex items-center justify-between">
+    <div className="min-h-screen bg-slate-950 font-sans selection:bg-indigo-500/30 selection:text-indigo-200 overflow-x-hidden relative">
+      <Particles />
+      {/* BACKGROUND LAYER: Image + Gradient + Tech Grid */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center" />
+        <div className="absolute inset-0 logistics-bg-overlay" />
+        <div className="absolute inset-0 tech-grid opacity-30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />
+      </div>
+
+      {/* HEADER */}
+      <header className="relative z-50 border-b border-white/[0.05] backdrop-blur-3xl bg-slate-950/30">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 h-28 flex items-center justify-between">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-4 group cursor-pointer"
+            className="flex items-center gap-5"
           >
-            <div className="bg-indigo-600 p-2.5 rounded-2xl shadow-lg shadow-indigo-900/20 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-              <Truck className="h-6 w-6 text-white" />
+            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-3.5 rounded-2xl shadow-xl glow-indigo floating">
+              <Truck className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-extrabold tracking-tight text-white font-heading leading-none">Amanda Gestão</h1>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1 hidden sm:block">Inteligência Logística</p>
+              <h1 className="text-3xl font-black tracking-tight text-white font-heading leading-none uppercase glow-text">Amanda Gestão</h1>
+              <p className="text-xs font-black text-indigo-400 uppercase tracking-[0.4em] mt-2 opacity-90">Inteligência Logística Pro</p>
             </div>
           </motion.div>
 
-          <div className="flex items-center gap-3">
-            {(fileA || fileB || results.length > 0) && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={resetAudit}
-                className="hidden sm:flex border-white/10 text-slate-400 hover:bg-white/5 rounded-xl"
+          <nav className="hidden lg:flex items-center gap-14">
+            {['Auditoria', 'Suporte Técnico', 'Novidades'].map((item, i) => (
+              <a 
+                key={item} 
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveTab(i === 0 ? "audit" : i === 1 ? "help-center" : "changelog");
+                }}
+                className={cn(
+                  "text-xs font-black uppercase tracking-[0.2em] transition-all duration-500 hover:text-white hover:scale-110",
+                  activeTab === (i === 0 ? "audit" : i === 1 ? "help-center" : "changelog") ? "text-white glow-text" : "text-slate-500"
+                )}
               >
-                <RefreshCcw className="mr-2 h-4 w-4" />
-                Nova Auditoria
-              </Button>
-            )}
+                {item}
+              </a>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-8">
             {user ? (
-              <div className="flex items-center gap-3">
-                <div className="hidden md:flex flex-col items-end">
-                  <span className="text-sm font-bold text-white">{user.displayName || user.email}</span>
-                  <span className="text-[10px] text-slate-500 font-medium">Usuário Verificado</span>
+              <div className="flex items-center gap-5">
+                <div className="flex flex-col items-end">
+                  <span className="text-sm font-black text-white leading-none tracking-tight">{user.displayName || user.email?.split('@')[0]}</span>
+                  <span className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mt-1.5 px-2 py-0.5 bg-indigo-500/10 rounded-full">Online</span>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => logout().catch(handleFirestoreError)} className="rounded-full hover:bg-white/5">
+                <Button variant="ghost" size="icon" onClick={() => logout()} className="rounded-2xl hover:bg-white/5 border border-white/10 w-12 h-12">
                   <LogOut className="h-5 w-5 text-slate-400" />
                 </Button>
               </div>
             ) : (
-              <Button onClick={() => login().catch(handleFirestoreError)} className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm">
-                <LogIn className="mr-2 h-4 w-4" />
+              <Button 
+                onClick={() => login()} 
+                className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:scale-105 transition-all duration-500 text-white rounded-2xl px-10 h-14 font-black uppercase tracking-widest shadow-2xl glow-indigo border border-white/20"
+              >
+                <LogIn className="mr-3 h-4 w-4" />
                 Entrar
               </Button>
             )}
@@ -309,207 +353,288 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl p-4 md:p-6 space-y-10 bg-[linear-gradient(135deg,rgba(15,23,42,0.9),rgba(30,58,138,0.85)),url('https://picsum.photos/seed/truck-trailer-highway-logistics/1920/1080?blur=1')] bg-cover bg-center bg-fixed rounded-3xl border border-white/10 shadow-2xl">
-        {errorMessage && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="p-4 bg-rose-950/20 text-rose-200 rounded-2xl border border-rose-500/20 flex items-center justify-between shadow-sm"
-          >
-            <span className="font-medium">{errorMessage}</span>
-            <Button variant="ghost" size="sm" onClick={() => setErrorMessage(null)} className="hover:bg-rose-500/20 rounded-full">X</Button>
-          </motion.div>
-        )}
-
-        {!apiKeyExists && showConfigWarning && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, height: 0 }}
-          >
-            <Card className="border-amber-500/30 bg-amber-500/10 overflow-hidden rounded-3xl relative backdrop-blur-md">
-              <CardContent className="p-6 flex items-start gap-4">
-                <div className="bg-amber-500 p-2.5 rounded-xl text-black shadow-lg shadow-amber-500/20">
-                  <AlertTriangle className="h-5 w-5" />
-                </div>
-                <div className="space-y-1 pr-8">
-                  <h3 className="font-bold text-amber-200 text-base">Configuração da API Pendente</h3>
-                  <p className="text-sm text-amber-100/70 leading-relaxed max-w-2xl">
-                    A chave de API do Gemini não foi detectada. Para utilizar a extração automática de PDFs e o Suporte Inteligente no Vercel, adicione a variável de ambiente <code className="bg-black/40 px-1.5 py-0.5 rounded text-amber-300 font-mono text-xs">GEMINI_API_KEY</code> nas configurações do seu projeto.
-                  </p>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => setShowConfigWarning(false)}
-                  className="absolute top-4 right-4 text-amber-200/50 hover:text-amber-200 hover:bg-amber-500/20 rounded-full"
-                >
-                  <RefreshCcw className="h-4 w-4 rotate-45" />
-                </Button>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-10 bg-slate-800/40 backdrop-blur-sm p-1.5 rounded-2xl border border-white/5 h-auto gap-1 shadow-sm">
-            <TabsTrigger value="audit" className="flex items-center gap-2 rounded-xl px-8 py-3 text-sm font-bold transition-all data-[state=active]:bg-slate-700 data-[state=active]:text-indigo-400 data-[state=active]:shadow-md border border-transparent data-[state=active]:border-white/5">
-              <FileSpreadsheet className="h-4 w-4" /> Auditoria
-            </TabsTrigger>
-            <TabsTrigger value="help-center" className="flex items-center gap-2 rounded-xl px-8 py-3 text-sm font-bold transition-all data-[state=active]:bg-slate-700 data-[state=active]:text-indigo-400 data-[state=active]:shadow-md border border-transparent data-[state=active]:border-white/5">
-              <MessageSquare className="h-4 w-4" /> Suporte Técnico
-            </TabsTrigger>
-            <TabsTrigger value="changelog" className="flex items-center gap-2 rounded-xl px-8 py-3 text-sm font-bold transition-all data-[state=active]:bg-slate-700 data-[state=active]:text-indigo-400 data-[state=active]:shadow-md border border-transparent data-[state=active]:border-white/5">
-              <Sparkles className="h-4 w-4" /> Novidades
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="audit" className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
-              <div className="lg:col-span-2 glass-card rounded-3xl p-6 border border-white/5 shadow-xl">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-xl font-extrabold text-white font-heading tracking-tight">Nova Auditoria</h2>
-                    <p className="text-xs text-slate-400">Configure os parâmetros e envie os relatórios.</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <input 
-                      id="tolerance"
-                      type="number" 
-                      step="0.01"
-                      min="0"
-                      value={tolerance}
-                      onChange={(e) => setTolerance(Number(e.target.value))}
-                      className="w-24 px-4 py-2 bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all shadow-inner"
-                      placeholder="Tolerância"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <FileUpload 
-                    label="Relatório Sistema A" 
-                    selectedFile={fileA} 
-                    onFileSelect={setFileA} 
-                  />
-                  <FileUpload 
-                    label="Relatório GW" 
-                    selectedFile={fileB} 
-                    onFileSelect={setFileB} 
-                  />
+      <main className="relative z-10 mx-auto max-w-7xl p-6 lg:p-20">
+        <AnimatePresence mode="wait">
+          {activeTab === "audit" && results.length === 0 && (
+            <motion.div
+              key="hero"
+              initial={{ opacity: 0, y: 60 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="flex flex-col items-center"
+            >
+              {/* HERO SECTION */}
+              <div className="w-full flex flex-col lg:flex-row items-center gap-24 mb-32">
+                <div className="flex-1 text-center lg:text-left space-y-10">
+                  <motion.div
+                    initial={{ opacity: 0, x: -60 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <Badge className="bg-indigo-500/15 text-indigo-300 border-indigo-500/40 px-5 py-2 rounded-full mb-8 uppercase tracking-[0.3em] font-black text-[11px] backdrop-blur-md">
+                      Next-Gen Analytics v2.5.2
+                    </Badge>
+                    <h2 className="text-7xl lg:text-9xl font-black text-white font-heading tracking-tighter leading-[0.85] glow-text drop-shadow-2xl">
+                      Auditoria <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Financeira</span>
+                    </h2>
+                    <p className="text-2xl text-slate-300/70 font-medium max-w-2xl mt-10 leading-relaxed">
+                      Evolua sua gestão com processamento automatizado. <br />
+                      Validamos dados complexos com precisão cirúrgica.
+                    </p>
+                    <div className="flex flex-wrap justify-center lg:justify-start gap-6 mt-14">
+                      <Button variant="ghost" onClick={resetAudit} className="text-slate-500 hover:text-white uppercase tracking-[0.3em] text-xs font-black h-16 px-10 rounded-[2rem] border border-white/10 hover:bg-white/5 transition-all duration-500">
+                        <RefreshCcw className="mr-3 h-5 w-5" />
+                        Limpar Dados
+                      </Button>
+                    </div>
+                  </motion.div>
                 </div>
                 
-                {/* Auto Mapping areas - simplified */}
-                <div className="grid gap-6 md:grid-cols-2 mt-6">
-                  {(columnsA.length > 0) && (
-                     <div className="text-xs text-indigo-300 font-medium">Sistema A: Colunas prontas</div>
-                  )}
-                  {(columnsB.length > 0) && (
-                     <div className="text-xs text-purple-300 font-medium">Relatório GW: Colunas prontas</div>
-                  )}
+                <div className="hidden lg:block flex-1 relative perspective-1000">
+                  <motion.div
+                    initial={{ opacity: 0, rotateY: 20, x: 100 }}
+                    animate={{ opacity: 0.7, rotateY: 0, x: 0 }}
+                    transition={{ duration: 1.2, delay: 0.4 }}
+                    className="relative group"
+                  >
+                    <img 
+                      src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=1200"
+                      alt="Modern Hub"
+                      className="w-full rounded-[4rem] object-cover h-[600px] shadow-[0_0_80px_rgba(79,70,229,0.3)] grayscale contrast-150 transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-l from-slate-950/90 via-slate-950/20 to-transparent rounded-[4rem]" />
+                    <div className="absolute -inset-4 border border-indigo-500/20 rounded-[4.5rem] -z-10 animate-pulse" />
+                  </motion.div>
                 </div>
               </div>
 
-              <div className="glass-card rounded-3xl p-6 border flex flex-col justify-center items-center gap-4 text-center">
-                <h3 className="font-bold text-white">Pronto para auditar?</h3>
+              {/* UPLOAD CARDS */}
+              <div className="w-full grid md:grid-cols-2 gap-12 max-w-6xl mx-auto mb-20">
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }}>
+                  <FileUploadPremium 
+                    title="Sistema Mandante"
+                    subtitle="Base de dados principal (GP Audit)"
+                    selectedFile={fileA}
+                    onFileSelect={setFileA}
+                    glowColor="indigo"
+                    status={isParsingA ? 'loading' : isMappingA ? 'mapping' : fileA ? 'success' : 'idle'}
+                  />
+                </motion.div>
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6 }}>
+                  <FileUploadPremium 
+                    title="Relatório Conferência"
+                    subtitle="Arquivo de validação logística"
+                    selectedFile={fileB}
+                    onFileSelect={setFileB}
+                    glowColor="purple"
+                    status={isParsingB ? 'loading' : isMappingB ? 'mapping' : fileB ? 'success' : 'idle'}
+                  />
+                </motion.div>
+              </div>
+
+              {/* MAIN CTA */}
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="text-center"
+              >
                 <Button 
                   size="lg" 
                   disabled={!canAudit || isProcessing} 
                   onClick={handleAudit}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl h-14 font-bold shadow-lg"
-                >
-                   {isProcessing ? "Processando..." : "Iniciar Auditoria"}
-                </Button>
-                {results.length > 0 && (
-                   <Button variant="outline" onClick={resetAudit} className="w-full text-xs text-slate-400">Limpar tudo</Button>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-12" id="audit-results">
-              {results.length > 0 && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="space-y-12"
-                >
-                  {/* Results components remain... */}
-                  <KPISection summary={summary} />
-                  
-                  {summary.divergencias === 0 && summary.faltantes === 0 && (
-                    <motion.div 
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-sm rounded-3xl p-10 flex flex-col items-center justify-center text-center space-y-4 shadow-xl shadow-emerald-950/40"
-                    >
-                      <div className="bg-emerald-500 p-5 rounded-3xl shadow-lg shadow-emerald-500/40">
-                        <CheckCircle2 className="h-10 w-10 text-white" />
-                      </div>
-                      <div className="space-y-1">
-                        <h3 className="text-3xl font-extrabold text-white font-heading tracking-tight">Auditoria 100% Conciliada!</h3>
-                        <p className="text-emerald-400 font-bold text-lg">Nenhuma divergência ou CTE faltante encontrado.</p>
-                      </div>
-                    </motion.div>
+                  className={cn(
+                    "relative group h-24 px-24 rounded-[3rem] font-black text-2xl uppercase tracking-[0.3em] transition-all duration-700 overflow-hidden",
+                    "bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white",
+                    "shadow-[0_0_80px_-10px_rgba(79,70,229,0.7)] hover:shadow-[0_0_120px_-10px_rgba(79,70,229,1)] hover:scale-110 active:scale-95",
+                    (!canAudit || isProcessing) && "opacity-30 grayscale cursor-not-allowed"
                   )}
+                >
+                  <span className="relative z-10 flex items-center gap-4">
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="h-7 w-7 animate-spin" />
+                        Validando...
+                      </>
+                    ) : (
+                      <>
+                        <Play className="h-7 w-7 fill-white" />
+                        Executar Auditoria
+                      </>
+                    )}
+                  </span>
+                  <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute -inset-[100%] group-hover:animate-[spin_4s_linear_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100" />
+                </Button>
+                {!canAudit && !isProcessing && (
+                  <p className="mt-8 text-indigo-400/50 font-black uppercase tracking-[0.4em] text-[11px] animate-pulse">
+                    Aguardando upload dos arquivos mandantes
+                  </p>
+                )}
+              </motion.div>
+            </motion.div>
+          )}
 
-                  <DashboardCharts results={results} summary={summary} />
+          {/* AUDIT RESULTS VIEW */}
+          {activeTab === "audit" && results.length > 0 && (
+            <motion.div
+              key="results"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="space-y-16 animate-in fade-in zoom-in-95 duration-1000"
+            >
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-10 mb-16 px-4">
+                <div className="space-y-3">
+                  <Badge className="bg-indigo-500/20 text-indigo-400 border-indigo-500/30 px-3 py-1 rounded-lg uppercase tracking-widest font-black text-[10px]">Relatório Consolidado</Badge>
+                  <h2 className="text-5xl font-black text-white font-heading tracking-tighter glow-text uppercase leading-none">Visão Analítica</h2>
+                  <p className="text-slate-400 font-black text-sm uppercase tracking-[0.3em]">{results.length} Registros Auditados com Sucesso</p>
+                </div>
+                <div className="flex flex-wrap justify-center gap-5">
+                  <Button variant="outline" onClick={resetAudit} className="border-white/10 bg-white/[0.03] text-slate-400 rounded-2xl px-10 h-16 font-bold hover:bg-white/[0.08] transition-all uppercase tracking-widest text-xs">
+                    <RefreshCcw className="mr-3 h-4 w-4" /> Novo Processo
+                  </Button>
+                  <Button 
+                    onClick={saveAudit} 
+                    disabled={isSaving}
+                    className="bg-indigo-600 shadow-xl glow-indigo text-white rounded-2xl px-10 h-16 font-black uppercase tracking-widest text-xs hover:scale-105 transition-all"
+                  >
+                    {isSaving ? <Loader2 className="mr-3 h-4 w-4 animate-spin" /> : <Save className="mr-3 h-4 w-4" />}
+                    Arquivar Auditoria
+                  </Button>
+                </div>
+              </div>
 
-                  <Card className="border-white/10 shadow-2xl shadow-slate-950/50 rounded-3xl overflow-hidden glass-card">
-                    <CardHeader className="bg-white/5 border-b border-white/10 p-8">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <CardTitle className="font-heading text-2xl font-extrabold tracking-tight text-white">Resultados da Auditoria</CardTitle>
-                          <CardDescription className="text-slate-400 font-medium">Tabela completa com batimento individual</CardDescription>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      <AuditTable results={results} onUpdateResult={handleUpdateResult} />
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
-            </div>
-          </TabsContent>
+              <KPISection summary={summary} />
+              
+              <div className="grid gap-12">
+                <DashboardCharts results={results} summary={summary} />
 
-          <TabsContent value="help-center" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="glass-card p-10 rounded-3xl border border-white/10 shadow-xl shadow-slate-950/40">
-              <h2 className="text-3xl font-extrabold font-heading text-white tracking-tight">Suporte Técnico Inteligente</h2>
-              <p className="text-slate-400 font-medium mt-2">Tire dúvidas sobre os relatórios carregados para auxiliar na sua análise estratégica.</p>
-            </div>
-            <HelpCenter results={results} summary={summary} />
-          </TabsContent>
+                <div className="glass-card rounded-[3rem] overflow-hidden border-indigo-500/10">
+                  <div className="p-10 border-b border-white/[0.05] flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div>
+                      <h3 className="text-2xl font-black text-white uppercase tracking-tight">Registro Individual</h3>
+                      <p className="text-sm text-slate-500 font-bold uppercase tracking-widest mt-1">Nível de granularidade máxima</p>
+                    </div>
+                    <div className="flex gap-4">
+                      <Button variant="ghost" size="lg" onClick={() => exportToExcel(results)} className="text-emerald-400 hover:bg-emerald-500/10 h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-[10px]"><FileSpreadsheet className="mr-2 h-5 w-5" /> Exportar Excel</Button>
+                      <Button variant="ghost" size="lg" onClick={() => exportToPDF(results, summary)} className="text-rose-400 hover:bg-rose-500/10 h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-[10px]"><FileText className="mr-2 h-5 w-5" /> Exportar PDF</Button>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto bg-slate-950/20">
+                    <AuditTable results={results} onUpdateResult={handleUpdateResult} />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
-          <TabsContent value="changelog" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <Changelog />
-          </TabsContent>
-        </Tabs>
+          {activeTab === "help-center" && (
+            <motion.div key="help" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="space-y-16">
+              <div className="text-center py-16 space-y-6">
+                <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 px-4 py-1.5 rounded-full uppercase tracking-[0.3em] font-black text-[11px]">AI Support Agent</Badge>
+                <h2 className="text-6xl font-black text-white font-heading tracking-tight glow-text uppercase">Cognição Assistida</h2>
+                <p className="text-slate-400 text-xl max-w-3xl mx-auto leading-relaxed">Nossa inteligência artificial avançada analisa inconsistências e gera insights preditivos sobre seus custos logísticos.</p>
+              </div>
+              <HelpCenter results={results} summary={summary} />
+            </motion.div>
+          )}
+
+          {activeTab === "changelog" && (
+            <motion.div key="news" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-10">
+              <Changelog />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
-      <footer className="mx-auto max-w-7xl px-4 md:px-8 py-12 border-t border-white/5 mt-20 relative overflow-hidden">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-3">
-              <div className="bg-slate-800 p-1.5 rounded-lg">
-                <Truck className="h-4 w-4 text-slate-400" />
-              </div>
-              <span className="text-lg font-black font-heading text-white tracking-tight">Amanda Gestão</span>
-            </div>
-            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-loose">© {new Date().getFullYear()} Amanda Gestão Logística. <br className="hidden sm:block" /> Todos os direitos reservados.</p>
+      <footer className="relative z-10 mx-auto max-w-7xl px-12 py-32 border-t border-white/[0.05] mt-32 flex flex-col items-center">
+        <div className="flex items-center gap-6 mb-10">
+          <div className="p-3 bg-white/[0.02] rounded-2xl border border-white/5">
+            <Truck className="h-8 w-8 text-indigo-500" />
           </div>
-          
-          <div className="flex flex-col items-end gap-1.5">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-              <span className="uppercase tracking-[0.2em] opacity-60">Criado por</span>
-              <span className="font-black text-slate-300 bg-slate-800 px-2 py-0.5 rounded">Amanda Vasconcelos</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest text-slate-600 border-white/5 bg-transparent">v2.4.0-build</Badge>
-              <span className="text-[10px] text-slate-600 font-bold">{new Date().toLocaleDateString('pt-BR')} {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
-            </div>
-          </div>
+          <span className="text-2xl font-black text-white font-heading uppercase tracking-[0.4em] glow-text">Amanda Gestão</span>
         </div>
-        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl" />
+        <p className="text-slate-600 text-sm font-black uppercase tracking-[0.5em] mb-14 text-center opacity-60">Logistics Intelligence Ecosystem</p>
+        <div className="flex gap-12 text-[10px] text-slate-800 font-black tracking-[0.3em] uppercase">
+          <span>Privacy Policy</span>
+          <span>Terms of Service</span>
+          <span>API Documentation</span>
+        </div>
+        <div className="mt-16 text-[10px] text-slate-900 font-black tracking-[0.2em] uppercase">© {new Date().getFullYear()} Developed for Amanda Vasconcelos</div>
       </footer>
     </div>
   );
 }
+
+// PREMIUM FILE UPLOAD COMPONENT
+interface FileUploadPremiumProps {
+  title: string;
+  subtitle: string;
+  glowColor: 'indigo' | 'purple';
+  selectedFile: File | null;
+  onFileSelect: (file: File) => void;
+  status?: 'idle' | 'loading' | 'mapping' | 'success' | 'error';
+}
+
+const FileUploadPremium: React.FC<FileUploadPremiumProps> = ({ title, subtitle, glowColor, selectedFile, onFileSelect, status }) => {
+  return (
+    <div className="group perspective-1000">
+      <div className={cn(
+        "relative rounded-[2.5rem] p-10 flex flex-col items-center text-center",
+        "glass-card glass-card-hover border-2 border-dashed h-[340px] justify-center cursor-pointer",
+        selectedFile && (glowColor === 'indigo' ? "border-indigo-500/50 bg-indigo-500/5 shadow-[0_0_30px_rgba(79,70,229,0.2)]" : "border-purple-500/50 bg-purple-500/5 shadow-[0_0_30px_rgba(168,85,247,0.2)]")
+      )}>
+        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-20" onChange={(e) => e.target.files?.[0] && onFileSelect(e.target.files[0])} />
+        
+        <div className={cn(
+          "w-24 h-24 rounded-3xl mb-8 flex items-center justify-center transition-all duration-700 relative",
+          selectedFile 
+            ? (glowColor === 'indigo' ? "bg-indigo-600 shadow-xl shadow-indigo-500/40" : "bg-purple-600 shadow-xl shadow-purple-500/40")
+            : "bg-slate-900 border border-white/5",
+          "group-hover:scale-110 group-hover:rotate-12"
+        )}>
+          {selectedFile ? (
+            <CheckCircle2 className="h-10 w-10 text-white" />
+          ) : (
+            <Upload className={cn("h-10 w-10", glowColor === 'indigo' ? "text-indigo-400" : "text-purple-400")} />
+          )}
+          {/* Pulsing inner glow */}
+          <div className={cn(
+            "absolute inset-0 rounded-3xl animate-ping opacity-20 pointer-events-none",
+            glowColor === 'indigo' ? "bg-indigo-400" : "bg-purple-400"
+          )} />
+        </div>
+
+        <h3 className="text-2xl font-black text-white font-heading tracking-tight mb-2">{title}</h3>
+        <p className="text-slate-400 text-sm font-medium mb-6">{subtitle}</p>
+
+        {selectedFile ? (
+          <div className="flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 rounded-2xl shadow-inner max-w-full overflow-hidden">
+            <FileText className={cn("h-4 w-4 shrink-0", glowColor === 'indigo' ? "text-indigo-400" : "text-purple-400")} />
+            <span className="text-xs text-white font-bold truncate">{selectedFile.name}</span>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div className={cn(
+              "text-[10px] font-black uppercase tracking-[0.25em] px-4 py-1.5 rounded-full inline-block",
+              glowColor === 'indigo' ? "bg-indigo-500/20 text-indigo-300" : "bg-purple-500/20 text-purple-300"
+            )}>
+              Enviar arquivo
+            </div>
+            <p className="text-[9px] text-slate-500 font-bold tracking-widest uppercase">CSV, XLS, DAT, PDF</p>
+          </div>
+        )}
+
+        {/* LOADING OVERLAY */}
+        {status === 'loading' && (
+          <div className="absolute inset-0 glass-card z-30 flex flex-col items-center justify-center gap-4 rounded-[2.5rem]">
+            <Loader2 className="h-10 w-10 animate-spin text-indigo-500" />
+            <p className="text-xs font-black uppercase tracking-widest text-indigo-400">Lendo Arquivo...</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
