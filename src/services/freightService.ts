@@ -86,8 +86,8 @@ export const parseFile = async (file: File): Promise<{ data: any[], footerTotal?
         }
 
         const chunksResults = [];
-        // Processar em lotes de 2 chunks por vez
-        const batchSize = 2;
+        // Processar em lotes de 4 chunks por vez
+        const batchSize = 4;
         for (let i = 0; i < allChunks.length; i += batchSize) {
           const batch = allChunks.slice(i, i + batchSize);
           const batchResults = await Promise.all(batch.map(chunk => parsePDFText(chunk)));
@@ -95,7 +95,7 @@ export const parseFile = async (file: File): Promise<{ data: any[], footerTotal?
           
           // Pequena pausa entre lotes se houver mais de um lote
           if (allChunks.length > batchSize && i + batchSize < allChunks.length) {
-            await new Promise(r => setTimeout(r, 1500));
+            await new Promise(r => setTimeout(r, 500));
           }
         }
         
