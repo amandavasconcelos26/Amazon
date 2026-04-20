@@ -4,11 +4,14 @@ import { GoogleGenAI, Type } from "@google/genai";
 let processingClient: GoogleGenAI | null = null;
 
 const getProcessingClient = () => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.warn("Configuration missing. Data extraction will not work.");
+  if (!processingClient) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.warn("Configuration missing. Data extraction will not work.");
+    }
+    processingClient = new GoogleGenAI({ apiKey: apiKey || 'dummy-key' });
   }
-  return new GoogleGenAI({ apiKey: apiKey || 'dummy-key' });
+  return processingClient;
 };
 
 export const autoMapColumns = async (columns: string[]) => {
@@ -17,7 +20,7 @@ export const autoMapColumns = async (columns: string[]) => {
     try {
       const engine = getProcessingClient();
       const response = await engine.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-3.1-flash-lite-preview",
         contents: [
           { text: `Mapeie as colunas fornecidas para as chaves do sistema.
           Colunas disponíveis: ${columns.join(', ')}
@@ -123,7 +126,7 @@ export const parsePDFText = async (text: string) => {
     try {
       const engine = getProcessingClient();
       const response = await engine.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-3.1-flash-lite-preview",
         contents: [
           { text: `Extraia os dados da tabela deste texto de relatório logístico:\n\n${text}` }
         ],
@@ -243,7 +246,7 @@ export const getAuditSupport = async (messages: any[], summary: any, simplifiedR
         * Resumo Executivo: Total de CTEs analisados: 3. Documentos faltantes: 1. Divergências de valor: 1. Valor em Risco: R$ 19.565,27. Margem Total (A): R$ 18.483,22.`;
 
       const response = await engine.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-3.1-flash-lite-preview',
         contents: messages,
         config: {
           systemInstruction: systemInstruction,

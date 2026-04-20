@@ -86,8 +86,8 @@ export const parseFile = async (file: File): Promise<{ data: any[], footerTotal?
         }
 
         const chunksResults = [];
-        // Processar em lotes de 4 chunks por vez
-        const batchSize = 4;
+        // Processar em lotes de 2 chunks por vez
+        const batchSize = 2;
         for (let i = 0; i < allChunks.length; i += batchSize) {
           const batch = allChunks.slice(i, i + batchSize);
           const batchResults = await Promise.all(batch.map(chunk => parsePDFText(chunk)));
@@ -95,7 +95,7 @@ export const parseFile = async (file: File): Promise<{ data: any[], footerTotal?
           
           // Pequena pausa entre lotes se houver mais de um lote
           if (allChunks.length > batchSize && i + batchSize < allChunks.length) {
-            await new Promise(r => setTimeout(r, 500));
+            await new Promise(r => setTimeout(r, 1500));
           }
         }
         
@@ -114,8 +114,8 @@ export const parseFile = async (file: File): Promise<{ data: any[], footerTotal?
         resolve({ data: allData, footerTotal });
     } catch (error: any) {
       console.error("Erro ao processar PDF:", error);
+      let userMsg = "Falha ao extrair dados do arquivo.";
       const errorStr = String(error);
-      let userMsg = error.message || "Falha ao extrair dados do arquivo.";
       
       if (errorStr.includes("429") || errorStr.includes("quota")) {
         userMsg = "Limite de processamento atingido. Por favor, aguarde 1 minuto e tente novamente ou use um arquivo menor.";
@@ -123,10 +123,9 @@ export const parseFile = async (file: File): Promise<{ data: any[], footerTotal?
         userMsg = "O servidor de processamento está com alta demanda no momento. Por favor, tente novamente em alguns instantes.";
       } else if (errorStr.includes("safety")) {
         userMsg = "O conteúdo do arquivo foi bloqueado pelos filtros de segurança do sistema.";
-      } else if (errorStr.includes("Não foi possível extrair nenhum texto")) {
-        userMsg = "O PDF parece estar vazio ou é uma imagem (scan). O sistema requer PDFs com texto selecionável.";
       }
       
+      // Não expor o JSON técnico para o usuário final
       reject(new Error(userMsg));
     }
     } else {
