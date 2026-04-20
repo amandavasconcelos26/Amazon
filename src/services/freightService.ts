@@ -123,9 +123,11 @@ export const parseFile = async (file: File): Promise<{ data: any[], footerTotal?
         userMsg = "O servidor de processamento está com alta demanda no momento. Por favor, tente novamente em alguns instantes.";
       } else if (errorStr.includes("safety")) {
         userMsg = "O conteúdo do arquivo foi bloqueado pelos filtros de segurança do sistema.";
+      } else {
+        userMsg = `Falha ao processar PDF: ${error.message || 'Erro desconhecido'}`;
       }
       
-      // Não expor o JSON técnico para o usuário final
+      // Não expor o JSON técnico para o usuário final, mas dar uma dica útil
       reject(new Error(userMsg));
     }
     } else {
