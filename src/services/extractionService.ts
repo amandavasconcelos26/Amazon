@@ -5,9 +5,12 @@ let processingClient: GoogleGenAI | null = null;
 
 const getProcessingClient = () => {
   if (!processingClient) {
-    const apiKey = process.env.GEMINI_API_KEY;
+    // Tenta primeiro o process.env (Vite define ou Node.js)
+    // Depois tenta window.ENV (injetado pelo servidor em produção)
+    const apiKey = process.env.GEMINI_API_KEY || (typeof window !== 'undefined' && (window as any).ENV?.GEMINI_API_KEY);
+    
     if (!apiKey) {
-      throw new Error("Chave de API (GEMINI_API_KEY) não configurada. Verifique as variáveis de ambiente.");
+      throw new Error("Erro de Configuração: A chave GEMINI_API_KEY não foi encontrada. Se você estiver no Vercel, certifique-se de configurar esta variável de ambiente nas configurações do projeto.");
     }
     processingClient = new GoogleGenAI({ apiKey });
   }
