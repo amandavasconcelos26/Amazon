@@ -78,10 +78,11 @@ export default function App() {
   const [showConfigWarning, setShowConfigWarning] = useState(true);
 
   const apiKeyExists = useMemo(() => {
-    const key = 
-      (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) || 
-      (typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY) ||
-      (typeof process !== 'undefined' && process.env && process.env.VITE_GEMINI_API_KEY);
+    // Explicitly check the define fallback we made in vite config first
+    const viteInjected = typeof process !== 'undefined' && process.env?.GEMINI_API_KEY;
+    const metaInjected = typeof import.meta !== 'undefined' && import.meta.env?.VITE_GEMINI_API_KEY;
+    
+    const key = viteInjected || metaInjected || "";
     return !!key && key !== 'undefined' && key !== 'null' && key.length > 5;
   }, []);
 
