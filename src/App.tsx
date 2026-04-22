@@ -78,11 +78,9 @@ export default function App() {
   const [showConfigWarning, setShowConfigWarning] = useState(true);
 
   const apiKeyExists = useMemo(() => {
-    // Explicitly check the define fallback we made in vite config first
-    const viteInjected = typeof process !== 'undefined' && process.env?.GEMINI_API_KEY;
-    const metaInjected = typeof import.meta !== 'undefined' && import.meta.env?.VITE_GEMINI_API_KEY;
-    
-    const key = viteInjected || metaInjected || "";
+    // Vite string replacement will replace process.env.GEMINI_API_KEY directly at build time
+    // Do NOT use typeof process checks, because process is not defined in the browser, making the condition false.
+    const key = import.meta.env?.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || "";
     return !!key && key !== 'undefined' && key !== 'null' && key.length > 5;
   }, []);
 

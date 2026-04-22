@@ -5,10 +5,9 @@ let processingClient: GoogleGenAI | null = null;
 
 const getProcessingClient = () => {
   if (!processingClient) {
-    // Check various ways the env var might be exposed depending on Vite/Vercel
-    const viteInjected = typeof process !== 'undefined' && process.env?.GEMINI_API_KEY;
-    const metaInjected = typeof import.meta !== 'undefined' && import.meta.env?.VITE_GEMINI_API_KEY;
-    const apiKey = viteInjected || metaInjected || "";
+    // Vite string replacement will replace this directly at build time
+    // Do NOT use typeof process checks, because process is not defined in the browser, making the condition false.
+    const apiKey = import.meta.env?.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || "";
 
     if (!apiKey || apiKey === 'undefined') {
       throw new Error("API_KEY_MISSING: A chave GEMINI_API_KEY não foi encontrada. No Vercel, vá em Settings > Environment Variables, adicione a chave 'GEMINI_API_KEY' ou 'VITE_GEMINI_API_KEY', e **MUITO IMPORTANTE: Faça um novo DEPLOY** (Redeploy) para que a chave seja injetada no frontend.");
