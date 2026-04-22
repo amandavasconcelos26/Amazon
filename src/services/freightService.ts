@@ -75,41 +75,23 @@ export const parseFile = async (file: File): Promise<{ data: any[], footerTotal?
     } else if (extension === 'pdf') {
       try {
         const pages = await extractPagesFromPDF(file);
-        const allData: any[] = [];
+        const fullText = pages.join('\n');
+        
         let footerTotal: number | undefined;
+        let allData: any[] = [];
         
-        // Processar em chunks menores (5 páginas) e em lotes para evitar sobrecarga
-        const chunkSize = 5;
-        const allChunks = [];
-        for (let i = 0; i < pages.length; i += chunkSize) {
-          allChunks.push(pages.slice(i, i + chunkSize).join('\n'));
-        }
-
-        const chunksResults = [];
-        // Processar em lotes de 2 chunks por vez
-        const batchSize = 2;
-        for (let i = 0; i < allChunks.length; i += batchSize) {
-          const batch = allChunks.slice(i, i + batchSize);
-          const batchResults = await Promise.all(batch.map(chunk => parsePDFText(chunk)));
-          chunksResults.push(...batchResults);
-          
-          // Pequena pausa entre lotes se houver mais de um lote
-          if (allChunks.length > batchSize && i + batchSize < allChunks.length) {
-            await new Promise(r => setTimeout(r, 1500));
-          }
-        }
+        // Passa o texto inteiro de uma vez, reduz drastically chamadas de API e rate limits
+        const chunkData: any = await parsePDFText(fullText);
         
-        chunksResults.forEach(chunkData => {
-          if (Array.isArray(chunkData)) {
-            chunkData.forEach(item => {
-              if (item.isFooter) {
-                footerTotal = sanitizeValue(item.valorTotal);
-              } else {
-                allData.push(item);
-              }
-            });
-          }
-        });
+        if (Array.isArray(chunkData)) {
+          chunkData.forEach(item => {
+            if (item.isFooter) {
+              footerTotal = sanitizeValue(item.valorTotal);
+            } else {
+              allData.push(item);
+            }
+          });
+        }
         
         resolve({ data: allData, footerTotal });
     } catch (error: any) {

@@ -78,7 +78,10 @@ export default function App() {
   const [showConfigWarning, setShowConfigWarning] = useState(true);
 
   const apiKeyExists = useMemo(() => {
-    const key = process.env.GEMINI_API_KEY;
+    const key = 
+      (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) || 
+      (typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY) ||
+      (typeof process !== 'undefined' && process.env && process.env.VITE_GEMINI_API_KEY);
     return !!key && key !== 'undefined' && key !== 'null' && key.length > 5;
   }, []);
 
@@ -410,7 +413,7 @@ export default function App() {
               </div>
 
               {/* UPLOAD CARDS */}
-              <div className="w-full grid md:grid-cols-2 gap-12 max-w-6xl mx-auto mb-20">
+              <div className="w-full grid md:grid-cols-2 gap-12 max-w-6xl mx-auto mb-10">
                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }}>
                   <FileUploadPremium 
                     title="Sistema Mandante"
@@ -432,6 +435,19 @@ export default function App() {
                   />
                 </motion.div>
               </div>
+
+              {errorMessage && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }} 
+                  animate={{ opacity: 1, scale: 1 }} 
+                  className="w-full max-w-4xl mx-auto mb-10 p-5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold flex items-center justify-center gap-4 text-sm"
+                >
+                  <div className="bg-rose-500/20 p-2 rounded-full">
+                    <AlertTriangle className="h-5 w-5" />
+                  </div>
+                  <span>{errorMessage}</span>
+                </motion.div>
+              )}
 
               {/* MAIN CTA */}
               <motion.div 
