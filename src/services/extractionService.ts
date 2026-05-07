@@ -41,7 +41,9 @@ export const autoMapColumns = async (columns: string[]) => {
         }
       });
 
-      return JSON.parse(response.text || '{}');
+      const responseText = response.text || '{}';
+      const cleanText = responseText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+      return JSON.parse(cleanText);
     } catch (error: any) {
       const errorStr = String(error);
       const isUnavailable = errorStr.includes("503") || errorStr.includes("UNAVAILABLE") || errorStr.includes("high demand");

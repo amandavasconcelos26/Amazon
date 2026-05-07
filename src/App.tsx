@@ -160,10 +160,19 @@ export default function App() {
 
     try {
       const mapping = await autoMapColumns(cols);
-      if (system === 'A') setMappingA(prev => ({ ...prev, ...mapping }));
-      else setMappingB(prev => ({ ...prev, ...mapping }));
-    } catch (error) {
+      // Validate mapping properties
+      const validMapping: Partial<ColumnMapping> = {};
+      if (mapping.cte) validMapping.cte = mapping.cte;
+      if (mapping.freteEmpresa) validMapping.freteEmpresa = mapping.freteEmpresa;
+      if (mapping.freteMotorista) validMapping.freteMotorista = mapping.freteMotorista;
+      if (mapping.margem) validMapping.margem = mapping.margem;
+      if (mapping.peso) validMapping.peso = mapping.peso;
+
+      if (system === 'A') setMappingA(prev => ({ ...prev, ...validMapping }));
+      else setMappingB(prev => ({ ...prev, ...validMapping }));
+    } catch (error: any) {
       console.error("Erro no Mapeamento Automático:", error);
+      setErrorMessage(`Aviso: O motor de IA falhou ao mapear colunas do Arquivo ${system} (${error.message || 'Limite atingido'}). O sistema usará o mapeamento básico.`);
     } finally {
       if (system === 'A') setIsMappingA(false);
       else setIsMappingB(false);
@@ -175,12 +184,24 @@ export default function App() {
       const mapping = { ...DEFAULT_MAPPING };
       columnsA.forEach(col => {
         const lower = col.toLowerCase();
-        if (lower === 'número' || lower === 'numero' || lower === 'ct' || lower.includes('documento')) mapping.cte = col;
-        if (lower === 'frete empr.' || lower === 'frete empr') mapping.freteEmpresa = col;
-        if (lower === 'frete mot.' || lower === 'frete mot') mapping.freteMotorista = col;
-        if (lower.includes('result') || lower.includes('margem') || lower === '%' || lower.includes('(%)')) mapping.margem = col;
-        if (lower.includes('peso (ton)') || lower.includes('peso ton') || lower.includes('peso')) mapping.peso = col;
+        if (lower.includes('número') || lower.includes('numero') || lower.includes('ct') || lower.includes('documento')) {
+          if (!mapping.cte) mapping.cte = col;
+        }
+        if (lower.includes('frete empr') || lower.includes('empresa') || lower.includes('normal')) {
+          if (!mapping.freteEmpresa) mapping.freteEmpresa = col;
+        }
+        if (lower.includes('frete mot') || lower.includes('motorista') || lower.includes('carreteiro')) {
+          if (!mapping.freteMotorista) mapping.freteMotorista = col;
+        }
+        if (lower.includes('result') || lower.includes('margem') || lower.includes('%')) {
+          if (!mapping.margem) mapping.margem = col;
+        }
+        if (lower.includes('peso')) {
+          if (!mapping.peso) mapping.peso = col;
+        }
       });
+      // Aggressive fallback to prevent locking the button:
+      if (!mapping.cte && columnsA.length > 0) mapping.cte = columnsA[0]; // assume first column is ID if no match
       setMappingA(mapping);
       handleAutoMap('A');
     }
@@ -191,12 +212,24 @@ export default function App() {
       const mapping = { ...DEFAULT_MAPPING };
       columnsB.forEach(col => {
         const lower = col.toLowerCase();
-        if (lower === 'cte/nfs' || lower === 'cte' || lower.includes('numero')) mapping.cte = col;
-        if (lower === 'valor frete') mapping.freteEmpresa = col;
-        if (lower === 'vl carreteiro' || lower === 'vl carreteiro líquido' || lower === 'vl carreteiro liquido') mapping.freteMotorista = col;
-        if (lower.includes('result') || lower.includes('margem') || lower === '%' || lower.includes('(%)')) mapping.margem = col;
-        if (lower.includes('peso / kg') || lower.includes('peso kg') || lower.includes('peso')) mapping.peso = col;
+        if (lower.includes('cte') || lower.includes('nfs') || lower.includes('numero') || lower.includes('ct') || lower.includes('documento')) {
+          if (!mapping.cte) mapping.cte = col;
+        }
+        if (lower.includes('valor frete') || lower.includes('frete emp') || lower.includes('normal')) {
+          if (!mapping.freteEmpresa) mapping.freteEmpresa = col;
+        }
+        if (lower.includes('carreteiro') || lower.includes('vl mot') || lower.includes('frete mot')) {
+          if (!mapping.freteMotorista) mapping.freteMotorista = col;
+        }
+        if (lower.includes('result') || lower.includes('margem') || lower.includes('%')) {
+          if (!mapping.margem) mapping.margem = col;
+        }
+        if (lower.includes('peso')) {
+          if (!mapping.peso) mapping.peso = col;
+        }
       });
+      // Aggressive fallback
+      if (!mapping.cte && columnsB.length > 0) mapping.cte = columnsB[0];
       setMappingB(mapping);
       handleAutoMap('B');
     }
