@@ -387,7 +387,7 @@ export const shareToWhatsApp = (results: AuditResult[], summary: AuditSummary) =
     text += `✅ Nenhuma divergência encontrada. Tudo conciliado!\n`;
   }
 
-  text += `\nGerado por Amanda Gestão - Desenvolvido por Mateus`;
+  text += `\nGerado por FreteVision - Desenvolvido por Mateus`;
 
   const encodedText = encodeURIComponent(text);
   window.open(`https://wa.me/?text=${encodedText}`, '_blank');

@@ -330,18 +330,18 @@ export default function App() {
 
       {/* HEADER */}
       <header className="relative z-50 border-b border-white/[0.05] backdrop-blur-3xl bg-slate-950/30">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10 h-28 flex items-center justify-between">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-10 h-20 md:h-28 flex items-center justify-between">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-5"
+            className="flex items-center gap-3 md:gap-5"
           >
-            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-3.5 rounded-2xl shadow-xl glow-indigo floating">
-              <Truck className="h-8 w-8 text-white" />
+            <div className="bg-white p-2 rounded-2xl shadow-xl glow-indigo floating h-12 w-12 md:h-16 md:w-16 flex items-center justify-center shrink-0">
+              <img src="/logo.png" alt="FreteVision" className="h-full w-full object-contain" />
             </div>
             <div>
-              <h1 className="text-3xl font-black tracking-tight text-white font-heading leading-none uppercase glow-text">Amanda Gestão</h1>
-              <p className="text-xs font-black text-indigo-400 uppercase tracking-[0.4em] mt-2 opacity-90">Inteligência Logística Pro</p>
+              <h1 className="text-xl md:text-3xl font-black tracking-tight text-white font-heading leading-none uppercase glow-text">FreteVision</h1>
+              <p className="text-[9px] md:text-xs font-black text-indigo-400 uppercase tracking-[0.4em] mt-1 md:mt-2 opacity-90">Inteligência Logística Pro</p>
             </div>
           </motion.div>
 
@@ -378,9 +378,9 @@ export default function App() {
             ) : (
               <Button 
                 onClick={() => login()} 
-                className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:scale-105 transition-all duration-500 text-white rounded-2xl px-10 h-14 font-black uppercase tracking-widest shadow-2xl glow-indigo border border-white/20"
+                className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:scale-105 transition-all duration-500 text-white rounded-2xl px-6 md:px-10 h-10 md:h-14 font-black uppercase text-[10px] md:text-sm tracking-widest shadow-2xl glow-indigo border border-white/20"
               >
-                <LogIn className="mr-3 h-4 w-4" />
+                <LogIn className="mr-2 md:mr-3 h-3 w-3 md:h-4 md:w-4" />
                 Entrar
               </Button>
             )}
@@ -410,16 +410,16 @@ export default function App() {
                     <Badge className="bg-indigo-500/15 text-indigo-300 border-indigo-500/40 px-5 py-2 rounded-full mb-8 uppercase tracking-[0.3em] font-black text-[11px] backdrop-blur-md">
                       Next-Gen Analytics v2.5.2
                     </Badge>
-                    <h2 className="text-7xl lg:text-9xl font-black text-white font-heading tracking-tighter leading-[0.85] glow-text drop-shadow-2xl">
+                    <h2 className="text-5xl md:text-7xl lg:text-9xl font-black text-white font-heading tracking-tighter leading-[0.85] glow-text drop-shadow-2xl">
                       Auditoria <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Financeira</span>
                     </h2>
-                    <p className="text-2xl text-slate-300/70 font-medium max-w-2xl mt-10 leading-relaxed">
-                      Evolua sua gestão com processamento automatizado. <br />
+                    <p className="text-lg md:text-xl lg:text-2xl text-slate-300/70 font-medium max-w-2xl mt-8 md:mt-10 leading-relaxed">
+                      Evolua sua gestão com processamento automatizado. <br className="hidden md:block"/>
                       Validamos dados complexos com precisão cirúrgica.
                     </p>
-                    <div className="flex flex-wrap justify-center lg:justify-start gap-6 mt-14">
-                      <Button variant="ghost" onClick={resetAudit} className="text-slate-500 hover:text-white uppercase tracking-[0.3em] text-xs font-black h-16 px-10 rounded-[2rem] border border-white/10 hover:bg-white/5 transition-all duration-500">
-                        <RefreshCcw className="mr-3 h-5 w-5" />
+                    <div className="flex flex-wrap justify-center lg:justify-start gap-4 md:gap-6 mt-10 md:mt-14">
+                      <Button variant="ghost" onClick={resetAudit} className="text-slate-500 hover:text-white uppercase tracking-[0.3em] text-[10px] md:text-xs font-black h-12 md:h-16 px-6 md:px-10 rounded-[2rem] border border-white/10 hover:bg-white/5 transition-all duration-500">
+                        <RefreshCcw className="mr-3 h-4 w-4 md:h-5 md:w-5" />
                         Limpar Dados
                       </Button>
                     </div>
@@ -493,21 +493,21 @@ export default function App() {
                   disabled={!canAudit || isProcessing} 
                   onClick={handleAudit}
                   className={cn(
-                    "relative group h-24 px-24 rounded-[3rem] font-black text-2xl uppercase tracking-[0.3em] transition-all duration-700 overflow-hidden",
+                    "relative group h-16 sm:h-20 md:h-24 px-6 sm:px-12 md:px-24 rounded-[2rem] md:rounded-[3rem] font-black text-xs sm:text-lg md:text-2xl uppercase tracking-[0.15em] sm:tracking-[0.2em] md:tracking-[0.3em] transition-all duration-700 overflow-hidden w-full md:w-auto",
                     "bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white",
                     "shadow-[0_0_80px_-10px_rgba(79,70,229,0.7)] hover:shadow-[0_0_120px_-10px_rgba(79,70,229,1)] hover:scale-110 active:scale-95",
                     (!canAudit || isProcessing) && "opacity-30 grayscale cursor-not-allowed"
                   )}
                 >
-                  <span className="relative z-10 flex items-center gap-4">
+                  <span className="relative z-10 flex items-center gap-3 md:gap-4">
                     {isProcessing ? (
                       <>
-                        <Loader2 className="h-7 w-7 animate-spin" />
+                        <Loader2 className="h-5 w-5 sm:h-7 sm:w-7 animate-spin" />
                         Validando...
                       </>
                     ) : (
                       <>
-                        <Play className="h-7 w-7 fill-white" />
+                        <Play className="h-5 w-5 sm:h-7 sm:w-7 fill-white" />
                         Executar Auditoria
                       </>
                     )}
@@ -516,7 +516,7 @@ export default function App() {
                   <div className="absolute -inset-[100%] group-hover:animate-[spin_4s_linear_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100" />
                 </Button>
                 {!canAudit && !isProcessing && (
-                  <p className="mt-8 text-indigo-400/50 font-black uppercase tracking-[0.4em] text-[11px] animate-pulse">
+                  <p className="mt-6 md:mt-8 text-indigo-400/50 font-black uppercase tracking-[0.15em] md:tracking-[0.4em] text-[9px] sm:text-[10px] md:text-[11px] animate-pulse text-center px-4">
                     Aguardando upload dos arquivos mandantes
                   </p>
                 )}
@@ -597,20 +597,20 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      <footer className="relative z-10 mx-auto max-w-7xl px-12 py-32 border-t border-white/[0.05] mt-32 flex flex-col items-center">
-        <div className="flex items-center gap-6 mb-10">
-          <div className="p-3 bg-white/[0.02] rounded-2xl border border-white/5">
-            <Truck className="h-8 w-8 text-indigo-500" />
+      <footer className="relative z-10 mx-auto max-w-7xl px-6 md:px-12 py-20 md:py-32 border-t border-white/[0.05] mt-20 md:mt-32 flex flex-col items-center">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-8 md:mb-10">
+          <div className="p-2 bg-white rounded-2xl shadow-lg border border-white/5 h-12 w-12 md:h-16 md:w-16 flex items-center justify-center">
+            <img src="/logo.png" alt="FreteVision" className="h-full w-full object-contain" />
           </div>
-          <span className="text-2xl font-black text-white font-heading uppercase tracking-[0.4em] glow-text">Amanda Gestão</span>
+          <span className="text-xl md:text-2xl font-black text-white font-heading uppercase tracking-[0.4em] glow-text text-center">FreteVision</span>
         </div>
-        <p className="text-slate-600 text-sm font-black uppercase tracking-[0.5em] mb-14 text-center opacity-60">Logistics Intelligence Ecosystem</p>
-        <div className="flex gap-12 text-[10px] text-slate-800 font-black tracking-[0.3em] uppercase">
+        <p className="text-slate-600 text-[10px] md:text-sm font-black uppercase tracking-[0.3em] md:tracking-[0.5em] mb-10 md:mb-14 text-center opacity-60">Logistics Intelligence Ecosystem</p>
+        <div className="flex flex-wrap justify-center gap-6 md:gap-12 text-[8px] md:text-[10px] text-slate-800 font-black tracking-[0.2em] md:tracking-[0.3em] uppercase">
           <span>Privacy Policy</span>
           <span>Terms of Service</span>
           <span>API Documentation</span>
         </div>
-        <div className="mt-16 text-[10px] text-slate-900 font-black tracking-[0.2em] uppercase">© {new Date().getFullYear()} Developed for Amanda Vasconcelos</div>
+        <div className="mt-16 text-[10px] text-slate-500 font-black tracking-[0.2em] uppercase">@Desenvolvido por Amanda Vasconcelos</div>
       </footer>
     </div>
   );
@@ -630,56 +630,56 @@ const FileUploadPremium: React.FC<FileUploadPremiumProps> = ({ title, subtitle, 
   return (
     <div className="group perspective-1000">
       <div className={cn(
-        "relative rounded-[2.5rem] p-10 flex flex-col items-center text-center",
-        "glass-card glass-card-hover border-2 border-dashed h-[340px] justify-center cursor-pointer",
+        "relative rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 flex flex-col items-center text-center",
+        "glass-card glass-card-hover border-2 border-dashed h-[280px] md:h-[340px] justify-center cursor-pointer",
         selectedFile && (glowColor === 'indigo' ? "border-indigo-500/50 bg-indigo-500/5 shadow-[0_0_30px_rgba(79,70,229,0.2)]" : "border-purple-500/50 bg-purple-500/5 shadow-[0_0_30px_rgba(168,85,247,0.2)]")
       )}>
         <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-20" onChange={(e) => e.target.files?.[0] && onFileSelect(e.target.files[0])} />
         
         <div className={cn(
-          "w-24 h-24 rounded-3xl mb-8 flex items-center justify-center transition-all duration-700 relative",
+          "w-16 h-16 md:w-24 md:h-24 rounded-[1.5rem] md:rounded-3xl mb-6 md:mb-8 flex items-center justify-center transition-all duration-700 relative",
           selectedFile 
             ? (glowColor === 'indigo' ? "bg-indigo-600 shadow-xl shadow-indigo-500/40" : "bg-purple-600 shadow-xl shadow-purple-500/40")
             : "bg-slate-900 border border-white/5",
           "group-hover:scale-110 group-hover:rotate-12"
         )}>
           {selectedFile ? (
-            <CheckCircle2 className="h-10 w-10 text-white" />
+            <CheckCircle2 className="h-8 w-8 md:h-10 md:w-10 text-white" />
           ) : (
-            <Upload className={cn("h-10 w-10", glowColor === 'indigo' ? "text-indigo-400" : "text-purple-400")} />
+            <Upload className={cn("h-8 w-8 md:h-10 md:w-10", glowColor === 'indigo' ? "text-indigo-400" : "text-purple-400")} />
           )}
           {/* Pulsing inner glow */}
           <div className={cn(
-            "absolute inset-0 rounded-3xl animate-ping opacity-20 pointer-events-none",
+            "absolute inset-0 rounded-[1.5rem] md:rounded-3xl animate-ping opacity-20 pointer-events-none",
             glowColor === 'indigo' ? "bg-indigo-400" : "bg-purple-400"
           )} />
         </div>
 
-        <h3 className="text-2xl font-black text-white font-heading tracking-tight mb-2">{title}</h3>
-        <p className="text-slate-400 text-sm font-medium mb-6">{subtitle}</p>
+        <h3 className="text-xl md:text-2xl font-black text-white font-heading tracking-tight mb-1 md:mb-2">{title}</h3>
+        <p className="text-slate-400 text-xs md:text-sm font-medium mb-4 md:mb-6">{subtitle}</p>
 
         {selectedFile ? (
-          <div className="flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 rounded-2xl shadow-inner max-w-full overflow-hidden">
+          <div className="flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 bg-white/5 border border-white/10 rounded-2xl shadow-inner max-w-full overflow-hidden">
             <FileText className={cn("h-4 w-4 shrink-0", glowColor === 'indigo' ? "text-indigo-400" : "text-purple-400")} />
-            <span className="text-xs text-white font-bold truncate">{selectedFile.name}</span>
+            <span className="text-[10px] md:text-xs text-white font-bold truncate">{selectedFile.name}</span>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2 md:space-y-3">
             <div className={cn(
-              "text-[10px] font-black uppercase tracking-[0.25em] px-4 py-1.5 rounded-full inline-block",
+              "text-[9px] md:text-[10px] font-black uppercase tracking-[0.25em] px-3 md:px-4 py-1 md:py-1.5 rounded-full inline-block",
               glowColor === 'indigo' ? "bg-indigo-500/20 text-indigo-300" : "bg-purple-500/20 text-purple-300"
             )}>
               Enviar arquivo
             </div>
-            <p className="text-[9px] text-slate-500 font-bold tracking-widest uppercase">CSV, XLS, DAT, PDF</p>
+            <p className="text-[8px] md:text-[9px] text-slate-500 font-bold tracking-widest uppercase">CSV, XLS, DAT, PDF</p>
           </div>
         )}
 
         {/* LOADING OVERLAY */}
         {status === 'loading' && (
-          <div className="absolute inset-0 glass-card z-30 flex flex-col items-center justify-center gap-4 rounded-[2.5rem]">
-            <Loader2 className="h-10 w-10 animate-spin text-indigo-500" />
-            <p className="text-xs font-black uppercase tracking-widest text-indigo-400">Lendo Arquivo...</p>
+          <div className="absolute inset-0 glass-card z-30 flex flex-col items-center justify-center gap-3 md:gap-4 rounded-[2rem] md:rounded-[2.5rem]">
+            <Loader2 className="h-8 w-8 md:h-10 md:w-10 animate-spin text-indigo-500" />
+            <p className="text-[10px] md:text-xs font-black uppercase tracking-widest text-indigo-400">Lendo Arquivo...</p>
           </div>
         )}
       </div>
