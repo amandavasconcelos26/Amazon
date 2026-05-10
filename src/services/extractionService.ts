@@ -28,12 +28,12 @@ export const autoMapColumns = async (columns: string[]) => {
           { text: `Mapeie as colunas fornecidas para as chaves do sistema.
           Colunas disponíveis: ${columns.join(', ')}
 
-          DICAS DE MAPEAMENTO (Tente encontrar correspondências exatas ou parciais):
+          DICAS DE MAPEAMENTO OBRIGATÓRIAS:
           - cte: Procure por "Número", "CT", "CTe/NFS", "Documento"
           - freteEmpresa: Procure por "Frete Empr.", "Valor frete", "Normal"
           - freteMotorista: Procure por "Frete Mot.", "Vl Carreteiro", "Vl Carreteiro Líquido"
           - peso: Procure por "Peso (Ton)", "Peso / Kg", "Peso"
-          - margem: Procure por "(%)", "%", "Result.", "Resultado", "Margem"` }
+          - margem: IMPORTANTE! Procure PRIMEIRO por colunas que tenham "(%)", "%". Se não houver, procure por "Result.", "Resultado", "Margem". Priorize o que parece ser porcentagem.` }
         ],
         config: { 
           systemInstruction: "Você é um motor de mapeamento de dados logísticos. Retorne APENAS um JSON válido com as chaves exatas: cte, freteEmpresa, freteMotorista, margem, peso. Os valores devem ser os nomes EXATOS das colunas fornecidas na lista. Se não encontrar uma coluna correspondente, use uma string vazia ''.",

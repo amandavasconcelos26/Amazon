@@ -76,6 +76,7 @@ export default function App() {
   const [history, setHistory] = useState<SavedAudit[]>([]);
   const [activeTab, setActiveTab] = useState("audit");
   const [showConfigWarning, setShowConfigWarning] = useState(true);
+  const [showMapping, setShowMapping] = useState(false);
 
   const apiKeyExists = useMemo(() => {
     // Vite string replacement will replace process.env.GEMINI_API_KEY directly at build time
@@ -193,9 +194,14 @@ export default function App() {
         if (lower.includes('frete mot') || lower.includes('motorista') || lower.includes('carreteiro')) {
           if (!mapping.freteMotorista) mapping.freteMotorista = col;
         }
-        if (lower.includes('result') || lower.includes('margem') || lower.includes('%')) {
-          if (!mapping.margem) mapping.margem = col;
+        
+        // Priorizar colunas com % para margem
+        if (lower.includes('%') || lower.includes('(%)')) {
+          mapping.margem = col;
+        } else if (!mapping.margem && (lower.includes('result') || lower.includes('margem'))) {
+          mapping.margem = col;
         }
+
         if (lower.includes('peso')) {
           if (!mapping.peso) mapping.peso = col;
         }
@@ -221,9 +227,14 @@ export default function App() {
         if (lower.includes('carreteiro') || lower.includes('vl mot') || lower.includes('frete mot')) {
           if (!mapping.freteMotorista) mapping.freteMotorista = col;
         }
-        if (lower.includes('result') || lower.includes('margem') || lower.includes('%')) {
-          if (!mapping.margem) mapping.margem = col;
+
+        // Priorizar colunas com % para margem
+        if (lower.includes('%') || lower.includes('(%)')) {
+          mapping.margem = col;
+        } else if (!mapping.margem && (lower.includes('result') || lower.includes('margem'))) {
+          mapping.margem = col;
         }
+
         if (lower.includes('peso')) {
           if (!mapping.peso) mapping.peso = col;
         }
@@ -467,6 +478,44 @@ export default function App() {
                   />
                 </motion.div>
               </div>
+
+              {(fileA || fileB) && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="w-full max-w-6xl mx-auto mb-16 px-4"
+                >
+                  <div className="flex items-center justify-between mb-8">
+                     <div className="flex items-center gap-4">
+                        <div className="bg-indigo-500/10 p-2.5 rounded-xl border border-indigo-500/20">
+                          <AlertTriangle className="h-5 w-5 text-indigo-400" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-black text-white uppercase tracking-widest">Configuração de Colunas</h4>
+                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">Verifique se o sistema identificou os campos corretamente</p>
+                        </div>
+                     </div>
+                     <Button 
+                       variant="ghost" 
+                       onClick={() => setShowMapping(!showMapping)}
+                       className="text-xs font-black uppercase tracking-widest text-indigo-400 hover:text-white"
+                     >
+                        {showMapping ? "Fechar Ajustes" : "Ajustar Mapeamento"}
+                     </Button>
+                  </div>
+                  
+                  {showMapping && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="grid grid-cols-1 lg:grid-cols-2 gap-10"
+                    >
+                      <ColumnMapper columns={columnsA} mapping={mappingA} onMappingChange={setMappingA} title="Mapeamento: Sistema Mandante (A)" />
+                      <ColumnMapper columns={columnsB} mapping={mappingB} onMappingChange={setMappingB} title="Mapeamento: Relatório Conferência (B)" />
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
 
               {errorMessage && (
                 <motion.div 
