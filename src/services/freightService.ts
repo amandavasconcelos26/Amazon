@@ -123,14 +123,14 @@ export const sanitizeValue = (val: any): number => {
   
   let str = String(val).trim();
   
-  // 1. Remover 'R$' e espaços (case insensitive)
-  str = str.replace(/R\$/gi, '').replace(/\s/g, '');
-
-  // 2. Tratar porcentagem: se termina com %, remove e vamos tratar como número
-  const isPercent = str.includes('%');
-  str = str.replace(/%/g, '');
+  // 1. Remover 'R$' e '%' (case insensitive)
+  str = str.replace(/R\$/gi, '').replace(/%/g, '');
+  
+  // 2. Remover espaços em branco
+  str = str.replace(/\s/g, '');
   
   // 3. Tratar separadores decimais e de milhar de forma inteligente
+  // Se houver tanto ponto quanto vírgula, o último é o decimal
   const lastComma = str.lastIndexOf(',');
   const lastDot = str.lastIndexOf('.');
   
@@ -138,42 +138,29 @@ export const sanitizeValue = (val: any): number => {
     // Formato BR: 1.234,56
     str = str.replace(/\./g, '').replace(',', '.');
   } else if (lastDot > lastComma) {
-    // Formato US or standard: 1,234.56
+    // Formato US: 1,234.56
     str = str.replace(/,/g, '');
   } else if (lastComma !== -1) {
     // Apenas vírgula: 1234,56
     str = str.replace(',', '.');
   }
+  // Se apenas ponto ou nenhum, parseFloat já resolve
   
   // 4. Converter para float
-  let num = parseFloat(str);
-  if (isNaN(num)) return 0;
-
-  return num;
+  const num = parseFloat(str);
+  return isNaN(num) ? 0 : num;
 };
 
 export const mapData = (rawRows: any[], mapping: ColumnMapping): CTEData[] => {
-  return rawRows.map(row => {
-    const freteEmpresa = sanitizeValue(row[mapping.freteEmpresa]);
-    const freteMotorista = sanitizeValue(row[mapping.freteMotorista]);
-    let margem = sanitizeValue(row[mapping.margem]);
-
-    // Lógica para detectar se a margem informada é absoluta (moeda) ou percentual
-    // Se a margem for um valor muito alto (ex: > 100 ou < -100) e não houver % no nome da coluna,
-    // e se o frete empresa for significativo, pode ser o valor absoluto do lucro/prejuízo.
-    // No entanto, se o usuário mapeou uma coluna de "Margem", vamos tentar usá-la.
-    // Se a margem estiver zerada e tivermos os fretes, podemos calcular como fallback? 
-    // O usuário disse que "não está puxando a margem informada", então ele quer que pegue do relatório.
-
-    return {
-      cte: String(row[mapping.cte] || '').trim().replace(/^0+/, ''),
-      freteEmpresa,
-      freteMotorista,
-      margem,
-      peso: sanitizeValue(row[mapping.peso]),
-      raw: row
-    };
-  }).filter(item => item.cte !== '');
+  return rawRows.map(row => ({
+    // Remove leading zeros and trim spaces for better matching (e.g., "000197" -> "197")
+    cte: String(row[mapping.cte] || '').trim().replace(/^0+/, ''),
+    freteEmpresa: sanitizeValue(row[mapping.freteEmpresa]),
+    freteMotorista: sanitizeValue(row[mapping.freteMotorista]),
+    margem: sanitizeValue(row[mapping.margem]),
+    peso: sanitizeValue(row[mapping.peso]),
+    raw: row
+  })).filter(item => item.cte !== '');
 };
 
 export const performAudit = (dataA: CTEData[], dataB: CTEData[], tolerance: number = 0): AuditResult[] => {

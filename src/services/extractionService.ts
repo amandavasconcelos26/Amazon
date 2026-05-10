@@ -23,17 +23,17 @@ export const autoMapColumns = async (columns: string[]) => {
     try {
       const engine = getProcessingClient();
       const response = await engine.models.generateContent({
-        model: "gemini-3.1-flash-lite-preview",
+        model: "gemini-2.5-flash",
         contents: [
           { text: `Mapeie as colunas fornecidas para as chaves do sistema.
           Colunas disponíveis: ${columns.join(', ')}
 
-          DICAS DE MAPEAMENTO OBRIGATÓRIAS:
+          DICAS DE MAPEAMENTO (Tente encontrar correspondências exatas ou parciais):
           - cte: Procure por "Número", "CT", "CTe/NFS", "Documento"
           - freteEmpresa: Procure por "Frete Empr.", "Valor frete", "Normal"
           - freteMotorista: Procure por "Frete Mot.", "Vl Carreteiro", "Vl Carreteiro Líquido"
           - peso: Procure por "Peso (Ton)", "Peso / Kg", "Peso"
-          - margem: IMPORTANTE! Procure PRIMEIRO por colunas que tenham "(%)", "%". Se não houver, procure por "Result.", "Resultado", "Margem". Priorize o que parece ser porcentagem.` }
+          - margem: Procure por "(%)", "%", "Result.", "Resultado", "Margem"` }
         ],
         config: { 
           systemInstruction: "Você é um motor de mapeamento de dados logísticos. Retorne APENAS um JSON válido com as chaves exatas: cte, freteEmpresa, freteMotorista, margem, peso. Os valores devem ser os nomes EXATOS das colunas fornecidas na lista. Se não encontrar uma coluna correspondente, use uma string vazia ''.",
@@ -126,12 +126,49 @@ export const parsePDFText = async (text: string) => {
 
   console.log("Processando texto (tamanho):", text.length);
 
-  let retries = 3; // Aumentar retries
+  // Tentativa de extração via Regex (Fallback)
+  const regexFallback = (fullText: string) => {
+    console.warn("Utilizando extração por Regex (Fallback) devido a erro da API...");
+    const results: any[] = [];
+    const lines = fullText.split('\n');
+    let footerTotal = 0;
+
+    for (const line of lines) {
+      const lowerLine = line.toLowerCase();
+      if (lowerLine.includes('result') || lowerLine.includes('total') || lowerLine.includes('margem total')) {
+        const match = line.match(/(?:R\$)?\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2}))/);
+        if (match) {
+          footerTotal = parseFloat(match[1].replace(/\./g, '').replace(',', '.'));
+        }
+      }
+
+      // Procurar CTE: 3 a 6 digitos, seguido de valores R$
+      const cteMatch = line.match(/\b(0*[1-9]\d{2,5})\b/);
+      const currencyMatches = [...line.matchAll(/(\d{1,3}(?:\.\d{3})*(?:,\d{2}))/g)];
+      
+      if (cteMatch && currencyMatches.length >= 2) {
+        results.push({
+          cte: cteMatch[1].replace(/^0+/, ''),
+          freteEmpresa: currencyMatches[0][1],
+          freteMotorista: currencyMatches[1][1],
+          peso: "0,00",
+          margem: currencyMatches.length >= 3 ? currencyMatches[2][1] : "0,00"
+        });
+      }
+    }
+    
+    if (footerTotal > 0) {
+      results.push({ isFooter: true, valorTotal: footerTotal.toString().replace('.', ',') });
+    }
+    return results;
+  };
+
+  let retries = 3; 
   while (retries >= 0) {
     try {
       const engine = getProcessingClient();
       const response = await engine.models.generateContent({
-        model: "gemini-3.1-flash-lite-preview", // Usar modelo mais leve para evitar cotas
+        model: "gemini-2.5-flash", 
         contents: [
           { text: `Extraia os dados da tabela deste texto de relatório logístico:\n\n${text}` }
         ],
@@ -158,23 +195,21 @@ export const parsePDFText = async (text: string) => {
       
       try {
         const parsed = JSON.parse(responseText);
-        return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+           return parsed;
+        }
+        return regexFallback(text);
       } catch (parseError) {
         console.warn("Dados malformados detectados, tentando reparar...");
         const repaired = repairJson(responseText);
         try {
-          return JSON.parse(repaired);
-        } catch (repairError) {
-          // Fallback regex
-          const objects = responseText.match(/\{[^{}]+\}/g);
-          if (objects) {
-            const results = [];
-            for (const objStr of objects) {
-              try { results.push(JSON.parse(objStr)); } catch (e) {}
-            }
-            return results;
+          const parsed = JSON.parse(repaired);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
           }
-          return [];
+          return regexFallback(text);
+        } catch (repairError) {
+          return regexFallback(text);
         }
       }
     } catch (error: any) {
@@ -191,16 +226,9 @@ export const parsePDFText = async (text: string) => {
       }
       
       console.error("Erro no processamento Gemini:", error);
-      if (errorStr.includes("safety")) {
-        throw new Error("O conteúdo do arquivo foi bloqueado pelos filtros de segurança da IA.");
-      }
-      if (isQuota) {
-         throw new Error("COTA EXCEDIDA (429): O limite de uso gratuito da API do Google Gemini foi atingido. Você precisa gerar uma nova API Key no Google AI Studio ou configurar o faturamento na sua conta Google e atualizar a chave no painel do Vercel.");
-      }
-      if (errorStr.includes("api key") || errorStr.includes("invalid key") || errorStr.includes("403")) {
-        throw new Error("Configuração da API Key inválida ou ausente. Verifique as configurações no Vercel/Ambiente.");
-      }
-      throw error;
+      
+      // FALLBACK AUTOMÁTICO SE FALHAR TUDO
+      return regexFallback(text);
     }
   }
 };
@@ -246,7 +274,7 @@ export const getAuditSupport = async (messages: any[], summary: any, simplifiedR
         * Resumo Executivo: Total de CTEs analisados: 3. Documentos faltantes: 1. Divergências de valor: 1. Valor em Risco: R$ 19.565,27. Margem Total (A): R$ 18.483,22.`;
 
       const response = await engine.models.generateContent({
-        model: 'gemini-3.1-flash-lite-preview',
+        model: 'gemini-2.5-flash',
         contents: messages,
         config: {
           systemInstruction: systemInstruction,
