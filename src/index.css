@@ -40,10 +40,8 @@
   }
 
   .logistics-bg-overlay {
-    background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.1) 15%, transparent 35%),
-                radial-gradient(circle at 10% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 60%),
-                radial-gradient(circle at 90% 80%, rgba(15, 23, 42, 0.8) 0%, transparent 80%),
-                linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(15, 23, 42, 1) 30%, rgba(11, 15, 25, 1) 100%);
+    background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.8) 35%, transparent 65%),
+                linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.9) 25%, rgba(15, 23, 42, 1) 60%, rgba(11, 15, 25, 1) 100%);
   }
 
   .floating {

@@ -324,18 +324,20 @@ export default function App() {
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 logistics-bg-overlay" />
         <div className="absolute inset-0 tech-grid opacity-30" />
+        {/* Superior mais branca para mesclar a logo e clarear o topo */}
+        <div className="absolute top-0 inset-x-0 h-[220px] md:h-[350px] bg-gradient-to-b from-white via-white/95 to-transparent pointer-events-none" />
       </div>
 
       {/* HEADER */}
       <header className="relative z-50">
-        <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-10 h-20 md:h-28 flex items-center justify-between">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-10 h-24 md:h-36 flex items-center justify-between">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-3 md:gap-5"
           >
-            <div className="bg-white p-2 rounded-xl shadow-md h-12 w-12 md:h-16 md:w-16 flex items-center justify-center shrink-0">
-              <img src="/logo.png" alt="FreteVision" className="h-full w-full object-contain" />
+            <div className="h-24 md:h-36 w-auto flex items-center justify-start shrink-0 pt-2 md:pt-4">
+              <img src="/logo.png" alt="FreteVision" className="h-full w-auto object-contain mix-blend-multiply" />
             </div>
             {/* Ocultando o texto do logo caso a imagem já tenha o nome, ou mantendo algo minimalista */}
           </motion.div>
@@ -592,7 +594,7 @@ export default function App() {
 
       <footer className="relative z-10 mx-auto max-w-7xl px-6 md:px-12 py-20 md:py-32 border-t border-white/[0.05] mt-20 md:mt-32 flex flex-col items-center">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-8 md:mb-10">
-          <div className="p-2 bg-white rounded-2xl shadow-lg border border-white/5 h-12 w-12 md:h-16 md:w-16 flex items-center justify-center">
+          <div className="h-16 w-16 md:h-24 md:w-24 flex items-center justify-center shrink-0">
             <img src="/logo.png" alt="FreteVision" className="h-full w-full object-contain" />
           </div>
           <span className="text-xl md:text-2xl font-black text-white font-heading uppercase tracking-[0.4em] glow-text text-center">FreteVision</span>
