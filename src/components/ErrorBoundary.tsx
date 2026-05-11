@@ -58,7 +58,7 @@ export class ErrorBoundary extends (React.Component as any) {
 
             <Button 
               onClick={() => window.location.reload()} 
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="w-full bg-amber-600 hover:bg-amber-700 text-white"
             >
               <RefreshCcw className="mr-2 h-4 w-4" />
               Recarregar Página

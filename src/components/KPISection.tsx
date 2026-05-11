@@ -20,16 +20,16 @@ export const KPISection: React.FC<KPISectionProps> = ({ summary }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <Card className="glass-card shadow-xl shadow-slate-950/40 rounded-[2.5rem] overflow-hidden hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 group border-white/10">
+        <Card className="glass-card shadow-xl shadow-slate-950/40 rounded-[2.5rem] overflow-hidden hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-500 group border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-white/5 border-b border-white/10 p-6">
             <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 font-sans">CTEs Analisados</CardTitle>
-            <div className="p-2.5 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-900/40 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 text-white">
+            <div className="p-2.5 bg-amber-600 rounded-xl shadow-lg shadow-amber-900/40 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 text-white">
               <FileCheck className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent className="p-6 pt-8">
             <div className="text-4xl font-black font-heading text-white tracking-tight leading-none">{summary.totalAnalizados}</div>
-            <div className="h-1 w-10 bg-indigo-500 mt-4 rounded-full group-hover:w-16 transition-all duration-500" />
+            <div className="h-1 w-10 bg-amber-500 mt-4 rounded-full group-hover:w-16 transition-all duration-500" />
             <p className="text-[10px] font-extrabold text-slate-500 mt-3 uppercase tracking-[0.1em]">Volume total auditado</p>
           </CardContent>
         </Card>

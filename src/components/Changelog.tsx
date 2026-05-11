@@ -25,7 +25,7 @@ export const Changelog: React.FC = () => {
     {
       title: "Mapeamento Automático Inteligente",
       description: "O sistema agora tenta identificar as colunas (CTE, Frete, Peso) automaticamente assim que você carrega os arquivos, economizando cliques.",
-      icon: <Sparkles className="h-5 w-5 text-indigo-600" />,
+      icon: <Sparkles className="h-5 w-5 text-amber-600" />,
       tag: "Produtividade"
     },
     {
@@ -46,7 +46,7 @@ export const Changelog: React.FC = () => {
     <div className="space-y-12">
       <div className="glass-card p-10 rounded-3xl border border-white/10 shadow-xl shadow-slate-950/40">
         <h2 className="text-3xl font-extrabold font-heading text-white flex items-center gap-4 tracking-tight">
-          <div className="p-3 bg-indigo-600 rounded-2xl shadow-xl shadow-indigo-900/40 text-white">
+          <div className="p-3 bg-amber-600 rounded-2xl shadow-xl shadow-amber-900/40 text-white">
             <Sparkles className="h-6 w-6" />
           </div>
           Registro de Evolução
@@ -58,7 +58,7 @@ export const Changelog: React.FC = () => {
 
       <div className="grid gap-6 md:grid-cols-2">
         {updates.map((update, index) => (
-          <Card key={index} className="glass-card border-white/10 shadow-xl shadow-slate-950/40 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 rounded-[2rem] overflow-hidden group hover:-translate-y-1">
+          <Card key={index} className="glass-card border-white/10 shadow-xl shadow-slate-950/40 hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-500 rounded-[2rem] overflow-hidden group hover:-translate-y-1">
             <CardHeader className="flex flex-row items-center gap-5 space-y-0 pb-4 bg-white/5 border-b border-white/10 p-8">
               <div className="p-3 bg-slate-800 rounded-2xl shadow-lg shadow-slate-950 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
                 {update.icon}
@@ -85,13 +85,13 @@ export const Changelog: React.FC = () => {
         ))}
       </div>
 
-      <div className="bg-indigo-600 p-8 rounded-[2rem] flex items-start gap-6 shadow-2xl shadow-indigo-900/40 text-white">
+      <div className="bg-amber-600 p-8 rounded-[2rem] flex items-start gap-6 shadow-2xl shadow-amber-900/40 text-white">
         <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md">
           <Zap className="h-6 w-6 text-white" />
         </div>
         <div>
           <h4 className="text-lg font-black font-heading uppercase tracking-widest">Dica de Produtividade</h4>
-          <p className="text-sm text-indigo-100 mt-2 font-medium leading-relaxed opacity-90">
+          <p className="text-sm text-amber-100 mt-2 font-medium leading-relaxed opacity-90">
             Sempre que subir um arquivo novo, o sistema fará o mapeamento automático. Se alguma coluna não for identificada, você ainda pode ajustá-la manualmente na aba de Auditoria clicando no seletor de colunas.
           </p>
         </div>

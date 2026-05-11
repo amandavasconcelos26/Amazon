@@ -110,12 +110,12 @@ export const AuditTable: React.FC<AuditTableProps> = ({ results, onUpdateResult 
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row gap-6 p-8 glass-card rounded-[2rem] border border-white/10 shadow-xl shadow-slate-950/40">
         <div className="relative flex-1 group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-focus-within:text-amber-400 transition-colors" />
           <Input
             placeholder="Pesquisar por Número do CTE..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-12 bg-white/5 border-white/10 rounded-2xl h-14 focus-visible:ring-4 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all font-bold text-white placeholder:text-slate-500 shadow-inner"
+            className="pl-12 bg-white/5 border-white/10 rounded-2xl h-14 focus-visible:ring-4 focus-visible:ring-amber-500/20 focus-visible:border-amber-500 transition-all font-bold text-white placeholder:text-slate-500 shadow-inner"
           />
         </div>
         
@@ -126,7 +126,7 @@ export const AuditTable: React.FC<AuditTableProps> = ({ results, onUpdateResult 
             onClick={() => setOnlyDivergent(!onlyDivergent)}
             className={cn(
               "rounded-2xl h-14 px-8 transition-all font-extrabold uppercase tracking-widest text-[10px] shadow-sm",
-              !onlyDivergent && "border-white/10 text-slate-400 hover:bg-white/5 hover:text-indigo-400 hover:border-indigo-500/30 bg-white/5"
+              !onlyDivergent && "border-white/10 text-slate-400 hover:bg-white/5 hover:text-amber-400 hover:border-amber-500/30 bg-white/5"
             )}
           >
             <AlertTriangle className={cn("mr-2 h-4 w-4", onlyDivergent ? "text-white" : "text-rose-500")} />
@@ -134,7 +134,7 @@ export const AuditTable: React.FC<AuditTableProps> = ({ results, onUpdateResult 
           </Button>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-[260px] bg-white/5 border-white/10 rounded-2xl h-14 font-extrabold text-[10px] uppercase tracking-widest text-slate-400 shadow-sm focus:ring-4 focus:ring-indigo-500/20">
+            <SelectTrigger className="w-full sm:w-[260px] bg-white/5 border-white/10 rounded-2xl h-14 font-extrabold text-[10px] uppercase tracking-widest text-slate-400 shadow-sm focus:ring-4 focus:ring-amber-500/20">
               <div className="flex items-center gap-3">
                 <Filter className="h-4 w-4 text-slate-500" />
                 <SelectValue placeholder="Status" />
@@ -184,7 +184,7 @@ export const AuditTable: React.FC<AuditTableProps> = ({ results, onUpdateResult 
                         "transition-all duration-300 group border-b border-white/5 data-grid-row",
                         result.status === 'BOTH_DIVERGENT' && "bg-rose-500/5 hover:bg-rose-500/10",
                         (result.status === 'A_ONLY' || result.status === 'B_ONLY') && "bg-amber-500/5 hover:bg-amber-500/10",
-                        isEditing && "bg-indigo-500/10 ring-2 ring-inset ring-indigo-500/20",
+                        isEditing && "bg-amber-500/10 ring-2 ring-inset ring-amber-500/20",
                         isCritical && "bg-rose-500/20 hover:bg-rose-500/30"
                       )}
                     >
@@ -192,7 +192,7 @@ export const AuditTable: React.FC<AuditTableProps> = ({ results, onUpdateResult 
                         <div className="flex flex-col">
                           <span>{result.cte}</span>
                           {result.fuzzyMatch && (
-                            <span className="text-[10px] text-indigo-400 font-black uppercase tracking-wider mt-1 bg-indigo-500/10 w-fit px-1.5 rounded">Sugestão</span>
+                            <span className="text-[10px] text-amber-400 font-black uppercase tracking-wider mt-1 bg-amber-500/10 w-fit px-1.5 rounded">Sugestão</span>
                           )}
                         </div>
                       </TableCell>
@@ -214,7 +214,7 @@ export const AuditTable: React.FC<AuditTableProps> = ({ results, onUpdateResult 
                             type="number" 
                             value={editValues.freteEmpresaA} 
                             onChange={(e) => setEditValues({...editValues, freteEmpresaA: parseFloat(e.target.value)})}
-                            className="h-10 w-28 text-right ml-auto font-mono text-xs border-white/10 focus-visible:ring-indigo-500/20 rounded-xl bg-slate-800 text-white"
+                            className="h-10 w-28 text-right ml-auto font-mono text-xs border-white/10 focus-visible:ring-amber-500/20 rounded-xl bg-slate-800 text-white"
                           />
                         ) : formatCurrency(result.sistemaA?.freteEmpresa)}
                       </TableCell>
@@ -226,7 +226,7 @@ export const AuditTable: React.FC<AuditTableProps> = ({ results, onUpdateResult 
                             type="number" 
                             value={editValues.freteEmpresaB} 
                             onChange={(e) => setEditValues({...editValues, freteEmpresaB: parseFloat(e.target.value)})}
-                            className="h-10 w-28 text-right ml-auto font-mono text-xs border-white/10 focus-visible:ring-indigo-500/20 rounded-xl bg-slate-800 text-white"
+                            className="h-10 w-28 text-right ml-auto font-mono text-xs border-white/10 focus-visible:ring-amber-500/20 rounded-xl bg-slate-800 text-white"
                           />
                         ) : formatCurrency(result.sistemaB?.freteEmpresa)}
                       </TableCell>
@@ -238,7 +238,7 @@ export const AuditTable: React.FC<AuditTableProps> = ({ results, onUpdateResult 
                             type="number" 
                             value={editValues.freteMotoristaA} 
                             onChange={(e) => setEditValues({...editValues, freteMotoristaA: parseFloat(e.target.value)})}
-                            className="h-10 w-28 text-right ml-auto font-mono text-xs border-white/10 focus-visible:ring-indigo-500/20 rounded-xl bg-slate-800 text-white"
+                            className="h-10 w-28 text-right ml-auto font-mono text-xs border-white/10 focus-visible:ring-amber-500/20 rounded-xl bg-slate-800 text-white"
                           />
                         ) : formatCurrency(result.sistemaA?.freteMotorista)}
                       </TableCell>
@@ -250,7 +250,7 @@ export const AuditTable: React.FC<AuditTableProps> = ({ results, onUpdateResult 
                             type="number" 
                             value={editValues.freteMotoristaB} 
                             onChange={(e) => setEditValues({...editValues, freteMotoristaB: parseFloat(e.target.value)})}
-                            className="h-10 w-28 text-right ml-auto font-mono text-xs border-white/10 focus-visible:ring-indigo-500/20 rounded-xl bg-slate-800 text-white"
+                            className="h-10 w-28 text-right ml-auto font-mono text-xs border-white/10 focus-visible:ring-amber-500/20 rounded-xl bg-slate-800 text-white"
                           />
                         ) : formatCurrency(result.sistemaB?.freteMotorista)}
                       </TableCell>
@@ -273,7 +273,7 @@ export const AuditTable: React.FC<AuditTableProps> = ({ results, onUpdateResult 
                             </Button>
                           </div>
                         ) : (
-                          <Button size="icon" variant="ghost" className="h-9 w-9 text-slate-600 hover:text-indigo-400 hover:bg-white/5 opacity-0 group-hover:opacity-100 transition-all rounded-xl" onClick={() => handleStartEdit(result)}>
+                          <Button size="icon" variant="ghost" className="h-9 w-9 text-slate-600 hover:text-amber-400 hover:bg-white/5 opacity-0 group-hover:opacity-100 transition-all rounded-xl" onClick={() => handleStartEdit(result)}>
                             <Edit className="h-5 w-5" />
                           </Button>
                         )}

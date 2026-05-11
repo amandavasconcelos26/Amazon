@@ -87,9 +87,9 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ results, summary }) => {
 
   return (
     <Card className="flex flex-col h-[700px] border-white/5 shadow-2xl shadow-slate-950/50 rounded-[2.5rem] overflow-hidden glass-card">
-      <CardHeader className="bg-indigo-900/10 border-b border-white/5 p-8">
+      <CardHeader className="bg-amber-900/10 border-b border-white/5 p-8">
         <CardTitle className="flex items-center gap-4 font-heading text-2xl font-black text-white tracking-tight uppercase">
-          <div className="p-4 bg-indigo-600 rounded-2xl shadow-xl shadow-indigo-900/40 text-white">
+          <div className="p-4 bg-amber-600 rounded-2xl shadow-xl shadow-amber-900/40 text-white">
             <MessageSquare className="h-6 w-6" />
           </div>
           Consultor Amanda
@@ -107,14 +107,14 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ results, summary }) => {
             >
               <div className={cn(
                 "flex-shrink-0 h-10 w-10 rounded-2xl flex items-center justify-center shadow-lg transition-transform hover:scale-110", 
-                msg.role === 'user' ? "bg-indigo-600 text-white shadow-indigo-900/40" : "bg-slate-800 border border-white/5 text-indigo-400 shadow-slate-950"
+                msg.role === 'user' ? "bg-amber-600 text-white shadow-amber-900/40" : "bg-slate-800 border border-white/5 text-amber-400 shadow-slate-950"
               )}>
                 {msg.role === 'user' ? <User className="h-5 w-5" /> : <Info className="h-5 w-5" />}
               </div>
               <div className={cn(
                 "p-5 rounded-[1.5rem] text-sm shadow-xl leading-relaxed font-medium transition-all", 
                 msg.role === 'user' 
-                  ? "bg-indigo-600 text-white rounded-tr-none shadow-indigo-900/20" 
+                  ? "bg-amber-600 text-white rounded-tr-none shadow-amber-900/20" 
                   : "bg-slate-800 border border-white/10 text-slate-300 rounded-tl-none shadow-slate-950/40"
               )}>
                 {msg.content}
@@ -123,13 +123,13 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ results, summary }) => {
           ))}
           {isLoading && (
             <div className="flex gap-4 max-w-[80%]">
-              <div className="flex-shrink-0 h-10 w-10 rounded-2xl bg-slate-800 border border-white/5 text-indigo-400 flex items-center justify-center shadow-lg shadow-slate-950">
+              <div className="flex-shrink-0 h-10 w-10 rounded-2xl bg-slate-800 border border-white/5 text-amber-400 flex items-center justify-center shadow-lg shadow-slate-950">
                 <Info className="h-5 w-5" />
               </div>
               <div className="p-6 rounded-[1.5rem] bg-slate-800 border border-white/10 text-slate-500 rounded-tl-none flex items-center gap-2 shadow-xl shadow-slate-950/40">
-                <div className="h-2.5 w-2.5 bg-indigo-500 rounded-full animate-bounce" />
-                <div className="h-2.5 w-2.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                <div className="h-2.5 w-2.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }} />
+                <div className="h-2.5 w-2.5 bg-amber-500 rounded-full animate-bounce" />
+                <div className="h-2.5 w-2.5 bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                <div className="h-2.5 w-2.5 bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }} />
               </div>
             </div>
           )}
@@ -142,12 +142,12 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ results, summary }) => {
               onChange={(e) => setInput(e.target.value)} 
               placeholder={results.length ? "Pergunte algo estratégico sobre os dados..." : "Carregue os relatórios para começar..."}
               disabled={isLoading || results.length === 0}
-              className="flex-1 border-white/10 rounded-2xl h-14 px-6 text-sm font-bold text-white placeholder:text-slate-600 focus-visible:ring-4 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all bg-white/5 shadow-inner"
+              className="flex-1 border-white/10 rounded-2xl h-14 px-6 text-sm font-bold text-white placeholder:text-slate-600 focus-visible:ring-4 focus-visible:ring-amber-500/20 focus-visible:border-amber-500 transition-all bg-white/5 shadow-inner"
             />
             <Button 
               type="submit" 
               disabled={isLoading || !input.trim() || results.length === 0} 
-              className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-900/40 h-14 w-14 rounded-2xl transition-all hover:scale-110 active:scale-95 group"
+              className="bg-amber-600 hover:bg-amber-700 text-white shadow-xl shadow-amber-900/40 h-14 w-14 rounded-2xl transition-all hover:scale-110 active:scale-95 group"
             >
               <Send className="h-6 w-6 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Button>

@@ -318,45 +318,40 @@ export default function App() {
                   mappingA.cte && mappingB.cte;
 
   return (
-    <div className="min-h-screen bg-slate-950 font-sans selection:bg-indigo-500/30 selection:text-indigo-200 overflow-x-hidden relative">
+    <div className="min-h-screen bg-[#0B0F19] font-sans overflow-x-hidden relative">
       <Particles />
       {/* BACKGROUND LAYER: Image + Gradient + Tech Grid */}
       <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center" />
         <div className="absolute inset-0 logistics-bg-overlay" />
         <div className="absolute inset-0 tech-grid opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />
       </div>
 
       {/* HEADER */}
-      <header className="relative z-50 border-b border-white/[0.05] backdrop-blur-3xl bg-slate-950/30">
+      <header className="relative z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-10 h-20 md:h-28 flex items-center justify-between">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-3 md:gap-5"
           >
-            <div className="bg-white p-2 rounded-2xl shadow-xl glow-indigo floating h-12 w-12 md:h-16 md:w-16 flex items-center justify-center shrink-0">
+            <div className="bg-white p-2 rounded-xl shadow-md h-12 w-12 md:h-16 md:w-16 flex items-center justify-center shrink-0">
               <img src="/logo.png" alt="FreteVision" className="h-full w-full object-contain" />
             </div>
-            <div>
-              <h1 className="text-xl md:text-3xl font-black tracking-tight text-white font-heading leading-none uppercase glow-text">FreteVision</h1>
-              <p className="text-[9px] md:text-xs font-black text-indigo-400 uppercase tracking-[0.4em] mt-1 md:mt-2 opacity-90">Inteligência Logística Pro</p>
-            </div>
+            {/* Ocultando o texto do logo caso a imagem já tenha o nome, ou mantendo algo minimalista */}
           </motion.div>
 
           <nav className="hidden lg:flex items-center gap-14">
-            {['Auditoria', 'Suporte Técnico', 'Novidades'].map((item, i) => (
+            {['Soluções', 'Auditoria', 'Tecnologia'].map((item, i) => (
               <a 
                 key={item} 
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  setActiveTab(i === 0 ? "audit" : i === 1 ? "help-center" : "changelog");
+                  setActiveTab(i === 0 ? "audit" : i === 1 ? "audit" : "changelog");
                 }}
                 className={cn(
-                  "text-xs font-black uppercase tracking-[0.2em] transition-all duration-500 hover:text-white hover:scale-110",
-                  activeTab === (i === 0 ? "audit" : i === 1 ? "help-center" : "changelog") ? "text-white glow-text" : "text-slate-500"
+                  "text-[15px] font-bold transition-all duration-500 hover:scale-105",
+                  "text-[#0B0F19]" // Texto escuro combinando com o fundo claro do topo
                 )}
               >
                 {item}
@@ -364,25 +359,29 @@ export default function App() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-6">
             {user ? (
               <div className="flex items-center gap-5">
                 <div className="flex flex-col items-end">
-                  <span className="text-sm font-black text-white leading-none tracking-tight">{user.displayName || user.email?.split('@')[0]}</span>
-                  <span className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mt-1.5 px-2 py-0.5 bg-indigo-500/10 rounded-full">Online</span>
+                  <span className="text-sm font-bold text-[#0B0F19] leading-none tracking-tight">{user.displayName || user.email?.split('@')[0]}</span>
+                  <span className="text-[10px] text-amber-600 font-bold uppercase tracking-widest mt-1.5 px-2 py-0.5 bg-amber-500/10 rounded-full">Online</span>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => logout()} className="rounded-2xl hover:bg-white/5 border border-white/10 w-12 h-12">
-                  <LogOut className="h-5 w-5 text-slate-400" />
+                <Button variant="ghost" size="icon" onClick={() => logout()} className="rounded-2xl hover:bg-black/5 border border-black/10 w-12 h-12">
+                  <LogOut className="h-5 w-5 text-[#0B0F19]" />
                 </Button>
               </div>
             ) : (
-              <Button 
-                onClick={() => login()} 
-                className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:scale-105 transition-all duration-500 text-white rounded-2xl px-6 md:px-10 h-10 md:h-14 font-black uppercase text-[10px] md:text-sm tracking-widest shadow-2xl glow-indigo border border-white/20"
-              >
-                <LogIn className="mr-2 md:mr-3 h-3 w-3 md:h-4 md:w-4" />
-                Entrar
-              </Button>
+              <div className="flex items-center gap-6">
+                <Button variant="link" onClick={() => login()} className="text-[#0B0F19] font-bold text-[15px] hover:text-[#0B0F19]/70 hover:no-underline">
+                  Entrar
+                </Button>
+                <Button 
+                  onClick={() => login()} 
+                  className="bg-[#0B0F19] hover:bg-[#1A2235] transition-all duration-500 text-white rounded-full px-8 h-12 font-semibold text-[15px] shadow-lg"
+                >
+                  Falar com Especialista
+                </Button>
+              </div>
             )}
           </div>
         </div>
@@ -400,59 +399,50 @@ export default function App() {
               className="flex flex-col items-center"
             >
               {/* HERO SECTION */}
-              <div className="w-full flex flex-col lg:flex-row items-center gap-24 mb-32">
-                <div className="flex-1 text-center lg:text-left space-y-10">
+              <div className="w-full flex flex-col lg:flex-row items-center gap-12 mb-32 pt-16">
+                <div className="flex-1 text-center lg:text-left space-y-8">
                   <motion.div
                     initial={{ opacity: 0, x: -60 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
                   >
-                    <Badge className="bg-indigo-500/15 text-indigo-300 border-indigo-500/40 px-5 py-2 rounded-full mb-8 uppercase tracking-[0.3em] font-black text-[11px] backdrop-blur-md">
-                      Next-Gen Analytics v2.5.2
+                    <Badge className="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-5 py-2.5 rounded-full mb-8 font-medium tracking-[0.05em] text-[13px] backdrop-blur-md">
+                      <span className="inline-block w-2 h-2 rounded-full bg-amber-500 mr-2"></span>
+                      Plataforma de Inteligência Logística
                     </Badge>
-                    <h2 className="text-5xl md:text-7xl lg:text-9xl font-black text-white font-heading tracking-tighter leading-[0.85] glow-text drop-shadow-2xl">
-                      Auditoria <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Financeira</span>
+                    <h2 className="text-5xl md:text-7xl lg:text-[5.5rem] font-medium text-white font-heading tracking-tight leading-[1.05] drop-shadow-2xl">
+                      Visão que move <br /> <span className="text-[#ceaa69]">resultados.</span>
                     </h2>
-                    <p className="text-lg md:text-xl lg:text-2xl text-slate-300/70 font-medium max-w-2xl mt-8 md:mt-10 leading-relaxed">
-                      Evolua sua gestão com processamento automatizado. <br className="hidden md:block"/>
-                      Validamos dados complexos com precisão cirúrgica.
+                    <p className="text-lg md:text-xl lg:text-2xl text-slate-300 font-normal max-w-2xl mt-8 md:mt-10 leading-relaxed">
+                      Auditoria avançada, cálculo preciso de frete, viabilidade de rotas e controle operacional em um único painel inteligente.
                     </p>
                     <div className="flex flex-wrap justify-center lg:justify-start gap-4 md:gap-6 mt-10 md:mt-14">
-                      <Button variant="ghost" onClick={resetAudit} className="text-slate-500 hover:text-white uppercase tracking-[0.3em] text-[10px] md:text-xs font-black h-12 md:h-16 px-6 md:px-10 rounded-[2rem] border border-white/10 hover:bg-white/5 transition-all duration-500">
-                        <RefreshCcw className="mr-3 h-4 w-4 md:h-5 md:w-5" />
-                        Limpar Dados
+                      <Button variant="outline" onClick={() => {
+                        const el = document.getElementById('upload-section');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }} className="bg-[#D6AD60] hover:bg-[#C29B50] text-[#0A0F1A] border-none rounded-full px-8 h-14 md:h-16 font-semibold text-base transition-all group">
+                        Começar agora
+                        <svg className="ml-2 h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                      </Button>
+                      <Button variant="outline" className="bg-transparent hover:bg-white/5 text-white border border-white/20 rounded-full px-8 h-14 md:h-16 font-semibold text-base transition-all">
+                        Agendar demonstração
                       </Button>
                     </div>
-                  </motion.div>
-                </div>
-                
-                <div className="hidden lg:block flex-1 relative perspective-1000">
-                  <motion.div
-                    initial={{ opacity: 0, rotateY: 20, x: 100 }}
-                    animate={{ opacity: 0.7, rotateY: 0, x: 0 }}
-                    transition={{ duration: 1.2, delay: 0.4 }}
-                    className="relative group"
-                  >
-                    <img 
-                      src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=1200"
-                      alt="Modern Hub"
-                      className="w-full rounded-[4rem] object-cover h-[600px] shadow-[0_0_80px_rgba(79,70,229,0.3)] grayscale contrast-150 transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-l from-slate-950/90 via-slate-950/20 to-transparent rounded-[4rem]" />
-                    <div className="absolute -inset-4 border border-indigo-500/20 rounded-[4.5rem] -z-10 animate-pulse" />
                   </motion.div>
                 </div>
               </div>
 
               {/* UPLOAD CARDS */}
-              <div className="w-full grid md:grid-cols-2 gap-12 max-w-6xl mx-auto mb-10">
+              <div id="upload-section" className="w-full grid md:grid-cols-2 gap-12 max-w-6xl mx-auto mb-10 pt-20">
                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }}>
                   <FileUploadPremium 
                     title="Sistema Mandante"
                     subtitle="Base de dados principal (GP Audit)"
                     selectedFile={fileA}
                     onFileSelect={setFileA}
-                    glowColor="indigo"
+                    glowColor="amber"
                     status={isParsingA ? 'loading' : isMappingA ? 'mapping' : fileA ? 'success' : 'idle'}
                   />
                 </motion.div>
@@ -462,7 +452,7 @@ export default function App() {
                     subtitle="Arquivo de validação logística"
                     selectedFile={fileB}
                     onFileSelect={setFileB}
-                    glowColor="purple"
+                    glowColor="slate"
                     status={isParsingB ? 'loading' : isMappingB ? 'mapping' : fileB ? 'success' : 'idle'}
                   />
                 </motion.div>
@@ -482,41 +472,44 @@ export default function App() {
               )}
 
               {/* MAIN CTA */}
-              <motion.div 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-                className="text-center"
-              >
+              <div className="text-center w-full max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-6 mt-12 mb-10">
                 <Button 
                   size="lg" 
                   disabled={!canAudit || isProcessing} 
                   onClick={handleAudit}
                   className={cn(
-                    "relative group h-16 sm:h-20 md:h-24 px-6 sm:px-12 md:px-24 rounded-[2rem] md:rounded-[3rem] font-black text-xs sm:text-lg md:text-2xl uppercase tracking-[0.15em] sm:tracking-[0.2em] md:tracking-[0.3em] transition-all duration-700 overflow-hidden w-full md:w-auto",
-                    "bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white",
-                    "shadow-[0_0_80px_-10px_rgba(79,70,229,0.7)] hover:shadow-[0_0_120px_-10px_rgba(79,70,229,1)] hover:scale-110 active:scale-95",
-                    (!canAudit || isProcessing) && "opacity-30 grayscale cursor-not-allowed"
+                    "relative group h-16 sm:h-20 px-8 sm:px-16 rounded-[2rem] md:rounded-full font-bold text-sm sm:text-lg uppercase tracking-[0.1em] transition-all duration-500 overflow-hidden w-full md:w-auto",
+                    "bg-[#D6AD60] text-[#0B0F19] hover:bg-[#C29B50] hover:scale-105 active:scale-95",
+                    (!canAudit || isProcessing) && "opacity-50 grayscale cursor-not-allowed"
                   )}
                 >
-                  <span className="relative z-10 flex items-center gap-3 md:gap-4">
+                  <span className="relative z-10 flex items-center gap-3">
                     {isProcessing ? (
                       <>
-                        <Loader2 className="h-5 w-5 sm:h-7 sm:w-7 animate-spin" />
+                        <Loader2 className="h-5 w-5 animate-spin" />
                         Validando...
                       </>
                     ) : (
                       <>
-                        <Play className="h-5 w-5 sm:h-7 sm:w-7 fill-white" />
+                        <Play className="h-5 w-5 fill-[#0B0F19]" />
                         Executar Auditoria
                       </>
                     )}
                   </span>
-                  <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="absolute -inset-[100%] group-hover:animate-[spin_4s_linear_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100" />
                 </Button>
+                <Button variant="ghost" onClick={resetAudit} className="text-slate-400 hover:text-white uppercase tracking-[0.1em] text-[12px] font-bold h-16 sm:h-20 px-8 rounded-full border border-white/10 hover:bg-white/5 transition-all duration-500 w-full md:w-auto">
+                  <RefreshCcw className="mr-3 h-4 w-4" />
+                  Limpar Dados
+                </Button>
+              </div>
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="text-center w-full"
+              >
                 {!canAudit && !isProcessing && (
-                  <p className="mt-6 md:mt-8 text-indigo-400/50 font-black uppercase tracking-[0.15em] md:tracking-[0.4em] text-[9px] sm:text-[10px] md:text-[11px] animate-pulse text-center px-4">
+                  <p className="mt-4 text-amber-500/50 font-bold uppercase tracking-[0.2em] text-[10px] md:text-[11px] animate-pulse text-center px-4">
                     Aguardando upload dos arquivos mandantes
                   </p>
                 )}
@@ -535,7 +528,7 @@ export default function App() {
             >
               <div className="flex flex-col lg:flex-row items-center justify-between gap-10 mb-16 px-4">
                 <div className="space-y-3">
-                  <Badge className="bg-indigo-500/20 text-indigo-400 border-indigo-500/30 px-3 py-1 rounded-lg uppercase tracking-widest font-black text-[10px]">Relatório Consolidado</Badge>
+                  <Badge className="bg-amber-500/20 text-amber-500 border-amber-500/30 px-3 py-1 rounded-lg uppercase tracking-widest font-black text-[10px]">Relatório Consolidado</Badge>
                   <h2 className="text-5xl font-black text-white font-heading tracking-tighter glow-text uppercase leading-none">Visão Analítica</h2>
                   <p className="text-slate-400 font-black text-sm uppercase tracking-[0.3em]">{results.length} Registros Auditados com Sucesso</p>
                 </div>
@@ -546,7 +539,7 @@ export default function App() {
                   <Button 
                     onClick={saveAudit} 
                     disabled={isSaving}
-                    className="bg-indigo-600 shadow-xl glow-indigo text-white rounded-2xl px-10 h-16 font-black uppercase tracking-widest text-xs hover:scale-105 transition-all"
+                    className="bg-[#D6AD60] text-[#0B0F19] hover:bg-[#C29B50] shadow-lg rounded-2xl px-10 h-16 font-bold uppercase tracking-widest text-xs hover:scale-105 transition-all"
                   >
                     {isSaving ? <Loader2 className="mr-3 h-4 w-4 animate-spin" /> : <Save className="mr-3 h-4 w-4" />}
                     Arquivar Auditoria
@@ -559,7 +552,7 @@ export default function App() {
               <div className="grid gap-12">
                 <DashboardCharts results={results} summary={summary} />
 
-                <div className="glass-card rounded-[3rem] overflow-hidden border-indigo-500/10">
+                <div className="glass-card rounded-[3rem] overflow-hidden border-amber-500/10">
                   <div className="p-10 border-b border-white/[0.05] flex flex-col sm:flex-row items-center justify-between gap-6">
                     <div>
                       <h3 className="text-2xl font-black text-white uppercase tracking-tight">Registro Individual</h3>
@@ -581,7 +574,7 @@ export default function App() {
           {activeTab === "help-center" && (
             <motion.div key="help" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="space-y-16">
               <div className="text-center py-16 space-y-6">
-                <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 px-4 py-1.5 rounded-full uppercase tracking-[0.3em] font-black text-[11px]">AI Support Agent</Badge>
+                <Badge className="bg-amber-500/20 text-amber-500 border-amber-500/30 px-4 py-1.5 rounded-full uppercase tracking-[0.3em] font-black text-[11px]">AI Support Agent</Badge>
                 <h2 className="text-6xl font-black text-white font-heading tracking-tight glow-text uppercase">Cognição Assistida</h2>
                 <p className="text-slate-400 text-xl max-w-3xl mx-auto leading-relaxed">Nossa inteligência artificial avançada analisa inconsistências e gera insights preditivos sobre seus custos logísticos.</p>
               </div>
@@ -620,7 +613,7 @@ export default function App() {
 interface FileUploadPremiumProps {
   title: string;
   subtitle: string;
-  glowColor: 'indigo' | 'purple';
+  glowColor: 'amber' | 'slate';
   selectedFile: File | null;
   onFileSelect: (file: File) => void;
   status?: 'idle' | 'loading' | 'mapping' | 'success' | 'error';
@@ -631,55 +624,55 @@ const FileUploadPremium: React.FC<FileUploadPremiumProps> = ({ title, subtitle, 
     <div className="group perspective-1000">
       <div className={cn(
         "relative rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 flex flex-col items-center text-center",
-        "glass-card glass-card-hover border-2 border-dashed h-[280px] md:h-[340px] justify-center cursor-pointer",
-        selectedFile && (glowColor === 'indigo' ? "border-indigo-500/50 bg-indigo-500/5 shadow-[0_0_30px_rgba(79,70,229,0.2)]" : "border-purple-500/50 bg-purple-500/5 shadow-[0_0_30px_rgba(168,85,247,0.2)]")
+        "glass-card glass-card-hover border border-white/5 h-[280px] md:h-[340px] justify-center cursor-pointer",
+        selectedFile && (glowColor === 'amber' ? "border-amber-500/30 bg-amber-500/5 glow-primary" : "border-slate-500/30 bg-slate-500/5 glow-primary")
       )}>
         <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-20" onChange={(e) => e.target.files?.[0] && onFileSelect(e.target.files[0])} />
         
         <div className={cn(
-          "w-16 h-16 md:w-24 md:h-24 rounded-[1.5rem] md:rounded-3xl mb-6 md:mb-8 flex items-center justify-center transition-all duration-700 relative",
+          "w-16 h-16 md:w-24 md:h-24 rounded-full mb-6 md:mb-8 flex items-center justify-center transition-all duration-700 relative",
           selectedFile 
-            ? (glowColor === 'indigo' ? "bg-indigo-600 shadow-xl shadow-indigo-500/40" : "bg-purple-600 shadow-xl shadow-purple-500/40")
-            : "bg-slate-900 border border-white/5",
-          "group-hover:scale-110 group-hover:rotate-12"
+            ? (glowColor === 'amber' ? "bg-amber-500 shadow-lg shadow-amber-500/20" : "bg-slate-700 shadow-lg shadow-slate-700/20")
+            : "bg-[#1A2235] border border-white/5",
+          "group-hover:scale-110"
         )}>
           {selectedFile ? (
-            <CheckCircle2 className="h-8 w-8 md:h-10 md:w-10 text-white" />
+            <CheckCircle2 className="h-8 w-8 md:h-10 md:w-10 text-[#0B0F19]" />
           ) : (
-            <Upload className={cn("h-8 w-8 md:h-10 md:w-10", glowColor === 'indigo' ? "text-indigo-400" : "text-purple-400")} />
+            <Upload className={cn("h-8 w-8 md:h-10 md:w-10", glowColor === 'amber' ? "text-amber-400" : "text-slate-400")} />
           )}
           {/* Pulsing inner glow */}
           <div className={cn(
-            "absolute inset-0 rounded-[1.5rem] md:rounded-3xl animate-ping opacity-20 pointer-events-none",
-            glowColor === 'indigo' ? "bg-indigo-400" : "bg-purple-400"
+            "absolute inset-0 rounded-full animate-ping opacity-20 pointer-events-none",
+            glowColor === 'amber' ? "bg-amber-400" : "bg-slate-400"
           )} />
         </div>
 
-        <h3 className="text-xl md:text-2xl font-black text-white font-heading tracking-tight mb-1 md:mb-2">{title}</h3>
+        <h3 className="text-xl md:text-2xl font-bold text-white font-heading tracking-tight mb-1 md:mb-2">{title}</h3>
         <p className="text-slate-400 text-xs md:text-sm font-medium mb-4 md:mb-6">{subtitle}</p>
 
         {selectedFile ? (
-          <div className="flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 bg-white/5 border border-white/10 rounded-2xl shadow-inner max-w-full overflow-hidden">
-            <FileText className={cn("h-4 w-4 shrink-0", glowColor === 'indigo' ? "text-indigo-400" : "text-purple-400")} />
-            <span className="text-[10px] md:text-xs text-white font-bold truncate">{selectedFile.name}</span>
+          <div className="flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 bg-white/5 border border-white/10 rounded-full shadow-inner max-w-full overflow-hidden">
+            <FileText className={cn("h-4 w-4 shrink-0", glowColor === 'amber' ? "text-amber-400" : "text-slate-400")} />
+            <span className="text-[10px] md:text-xs text-white font-medium truncate">{selectedFile.name}</span>
           </div>
         ) : (
           <div className="space-y-2 md:space-y-3">
             <div className={cn(
-              "text-[9px] md:text-[10px] font-black uppercase tracking-[0.25em] px-3 md:px-4 py-1 md:py-1.5 rounded-full inline-block",
-              glowColor === 'indigo' ? "bg-indigo-500/20 text-indigo-300" : "bg-purple-500/20 text-purple-300"
+              "text-[9px] md:text-[10px] font-bold uppercase tracking-[0.1em] px-4 md:px-6 py-2 md:py-2.5 rounded-full inline-block",
+              glowColor === 'amber' ? "bg-amber-500/10 text-amber-500" : "bg-white/5 text-slate-300"
             )}>
-              Enviar arquivo
+              Selecionar arquivo
             </div>
-            <p className="text-[8px] md:text-[9px] text-slate-500 font-bold tracking-widest uppercase">CSV, XLS, DAT, PDF</p>
+            <p className="text-[8px] md:text-[9px] text-slate-500 font-medium tracking-wider uppercase">CSV, XLS, DAT, PDF</p>
           </div>
         )}
 
         {/* LOADING OVERLAY */}
         {status === 'loading' && (
           <div className="absolute inset-0 glass-card z-30 flex flex-col items-center justify-center gap-3 md:gap-4 rounded-[2rem] md:rounded-[2.5rem]">
-            <Loader2 className="h-8 w-8 md:h-10 md:w-10 animate-spin text-indigo-500" />
-            <p className="text-[10px] md:text-xs font-black uppercase tracking-widest text-indigo-400">Lendo Arquivo...</p>
+            <Loader2 className="h-8 w-8 md:h-10 md:w-10 animate-spin text-amber-500" />
+            <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-amber-400">Lendo Arquivo...</p>
           </div>
         )}
       </div>

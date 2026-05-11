@@ -10,43 +10,40 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground antialiased selection:bg-indigo-500/30 selection:text-indigo-200;
+    @apply bg-[#0B0F19] text-foreground antialiased selection:bg-amber-500/30 selection:text-amber-200;
   }
 }
 
 @layer utilities {
   .glass-card {
-    @apply bg-slate-950/60 backdrop-blur-[40px] border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.6)];
+    @apply bg-[#151B2B]/60 backdrop-blur-[40px] border border-white/[0.05] shadow-[0_20px_50px_rgba(0,0,0,0.4)];
   }
   
   .glass-card-hover {
-    @apply hover:bg-slate-900/80 hover:border-indigo-500/40 hover:shadow-[0_0_60px_-10px_rgba(79,70,229,0.5)] transition-all duration-700 ease-out;
+    @apply hover:bg-[#1A2235]/80 hover:border-amber-500/30 hover:shadow-[0_0_60px_-10px_rgba(245,158,11,0.2)] transition-all duration-700 ease-out;
   }
 
   .glow-text {
-    text-shadow: 0 0 30px rgba(99, 102, 241, 0.6), 0 0 10px rgba(99, 102, 241, 0.4);
+    text-shadow: 0 0 30px rgba(245, 158, 11, 0.4), 0 0 10px rgba(245, 158, 11, 0.2);
   }
 
-  .glow-indigo {
-    @apply shadow-[0_0_40px_-5px_rgba(79,70,229,0.5)] hover:shadow-[0_0_60px_-5px_rgba(79,70,229,0.8)] transition-all duration-500;
-  }
-
-  .glow-purple {
-    @apply shadow-[0_0_40px_-5px_rgba(168,85,247,0.5)] hover:shadow-[0_0_60px_-5px_rgba(168,85,247,0.8)] transition-all duration-500;
+  .glow-primary {
+    @apply shadow-[0_0_40px_-5px_rgba(245,158,11,0.3)] hover:shadow-[0_0_60px_-5px_rgba(245,158,11,0.6)] transition-all duration-500;
   }
 
   .tech-grid {
     background-image: 
-      linear-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+      linear-gradient(rgba(245, 158, 11, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 158, 11, 0.05) 1px, transparent 1px);
     background-size: 60px 60px;
     mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
   }
 
   .logistics-bg-overlay {
-    background: radial-gradient(circle at 20% 30%, rgba(30, 58, 138, 0.6) 0%, transparent 70%),
-                radial-gradient(circle at 80% 70%, rgba(88, 28, 135, 0.5) 0%, transparent 70%),
-                linear-gradient(135deg, rgba(2, 6, 23, 0.98) 0%, rgba(15, 23, 42, 0.92) 100%);
+    background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.1) 15%, transparent 35%),
+                radial-gradient(circle at 10% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 60%),
+                radial-gradient(circle at 90% 80%, rgba(15, 23, 42, 0.8) 0%, transparent 80%),
+                linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(15, 23, 42, 1) 30%, rgba(11, 15, 25, 1) 100%);
   }
 
   .floating {
